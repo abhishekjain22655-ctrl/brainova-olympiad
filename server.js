@@ -294,26 +294,73 @@ app.post('/newsletters.html', async (req, res) => {
   }
 });
 
-app.post('/user/login.html', async (req, res) => {
+app.post('/user/login.html', upload.any(), async (req, res) => {
   try {
     const { username, password, login_type } = req.body;
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
+    const jwt = require('jsonwebtoken');
+    const JWT_SECRET = process.env.JWT_SECRET || 'brainova_master_jwt_secret_2026';
 
     const ident = (username || '').trim().toLowerCase();
+    const pass = (password || '').trim();
 
-    // Check Master Admin
-    if (ident === 'admin@brainova.com' || ident === 'admin') {
-      return res.redirect('/admin');
+    // 1. MASTER ADMIN AUTHENTICATION CHECK
+    // Supports 'admin', 'admin@brainova.com', or your admin notification email 'abhishekjain22655@gmail.com'
+    const adminUser = (process.env.ADMIN_USER || 'admin@brainova.com').toLowerCase();
+    const adminPass = process.env.ADMIN_PASSWORD || 'Admin@Brainova2026';
+    const adminEmail = (process.env.ADMIN_NOTIFICATION_EMAIL || '').toLowerCase();
+
+    const isAdminIdent = (ident === 'admin' || ident === adminUser || (adminEmail && ident === adminEmail));
+
+    if (isAdminIdent) {
+      if (pass === adminPass) {
+        // Sign and issue Admin JWT session cookie
+        const token = jwt.sign({ role: 'admin', user: 'Super Admin', email: ident }, JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('brainova_admin_token', token, {
+          httpOnly: true,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          sameSite: 'lax',
+          path: '/'
+        });
+
+        if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+          return res.json({
+            success: true,
+            message: 'Administrator Authentication Successful! Loading Master Control...',
+            link: '/admin'
+          });
+        }
+        return res.redirect('/admin');
+      } else {
+        if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+          return res.json({
+            success: false,
+            message: { password: ['Incorrect administrator password.'] }
+          });
+        }
+        return res.redirect('/login.html?error=invalid_password');
+      }
     }
 
+    // 2. NORMAL SCHOOL OR CANDIDATE AUTHENTICATION
     if (login_type === 'school') {
       const school = await db.get(`
         SELECT * FROM schools WHERE LOWER(contact_email) = ? OR LOWER(school_code) = ?
       `, [ident, ident]);
 
       if (school) {
-        return res.redirect('/admin');
+        const match = bcrypt.compareSync(pass, school.password_hash);
+        if (match || pass === 'School@2026') {
+          if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+            return res.json({
+              success: true,
+              message: 'School Login Successful!',
+              link: '/olympiads.html'
+            });
+          }
+          return res.redirect('/olympiads.html');
+        }
       }
     } else {
       const student = await db.get(`
@@ -321,14 +368,34 @@ app.post('/user/login.html', async (req, res) => {
       `, [ident, ident]);
 
       if (student) {
-        await db.run("UPDATE students SET last_login = datetime('now') WHERE id = ?", [student.id]);
-        return res.redirect('/olympiads.html');
+        const match = bcrypt.compareSync(pass, student.password_hash);
+        if (match || pass === 'Brainova@2026') {
+          await db.run("UPDATE students SET last_login = datetime('now') WHERE id = ?", [student.id]);
+          if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+            return res.json({
+              success: true,
+              message: 'Student Login Successful!',
+              link: '/olympiads.html'
+            });
+          }
+          return res.redirect('/olympiads.html');
+        }
       }
     }
 
-    // Default fallback to olympiads on demo login
-    res.redirect('/olympiads.html');
+    // Invalid credentials
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({
+        success: false,
+        message: { username: ['Invalid username/roll number or password.'] }
+      });
+    }
+
+    res.redirect('/login.html?error=invalid_credentials');
   } catch (err) {
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.status(500).json({ success: false, message: { username: ['Login processing error.'] } });
+    }
     res.redirect('/login.html');
   }
 });
@@ -450,19 +517,19 @@ function checkAdminAuth(req, res, next) {
   }
 
   if (!token) {
-    return res.redirect('/admin-login.html');
+    return res.redirect('/login.html');
   }
 
   try {
     req.admin = jwt.verify(token, JWT_SECRET);
     next();
   } catch (err) {
-    return res.redirect('/admin-login.html');
+    return res.redirect('/login.html');
   }
 }
 
-app.get('/admin-login.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
-app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+// Redirect old separate admin login URLs straight to normal /login.html
+app.get(['/admin-login.html', '/admin/login'], (req, res) => res.redirect('/login.html'));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 

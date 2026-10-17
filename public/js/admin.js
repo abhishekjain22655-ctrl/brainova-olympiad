@@ -821,9 +821,9 @@ function setupEventListeners() {
       try {
         const res = await fetch('/api/admin/logout', { method: 'POST' });
         const json = await res.json();
-        window.location.href = json.redirect || '/admin-login.html';
+        window.location.href = json.redirect || '/login.html';
       } catch (e) {
-        window.location.href = '/admin-login.html';
+        window.location.href = '/login.html';
       }
     }
   });

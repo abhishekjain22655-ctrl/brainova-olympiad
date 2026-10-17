@@ -402,7 +402,12 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ success: false, message: 'Username and password required.' });
   }
 
-  const validUser = (username.trim().toLowerCase() === ADMIN_USER.toLowerCase() || username.trim().toLowerCase() === 'admin');
+  const adminEmail = (process.env.ADMIN_NOTIFICATION_EMAIL || '').toLowerCase();
+  const validUser = (
+    username.trim().toLowerCase() === ADMIN_USER.toLowerCase() || 
+    username.trim().toLowerCase() === 'admin' ||
+    (adminEmail && username.trim().toLowerCase() === adminEmail)
+  );
   const validPass = (password === ADMIN_PASSWORD);
 
   if (!validUser || !validPass) {
@@ -422,7 +427,7 @@ router.post('/login', (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.clearCookie('brainova_admin_token', { path: '/' });
-  res.json({ success: true, redirect: '/admin-login.html' });
+  res.json({ success: true, redirect: '/login.html' });
 });
 
 router.get('/session', (req, res) => {
