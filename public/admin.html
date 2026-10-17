@@ -7,71 +7,23 @@
   
   <link rel="shortcut icon" type="image/png" href="/public/assets/media/logo.png">
 
-  <!-- Fonts & Icons -->
+  <!-- Fonts & Font Awesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- CSS Styles -->
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js for High-Performance Visual Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Luxury Dark Admin Stylesheet -->
   <link rel="stylesheet" href="/css/admin.css">
-  <style>
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .status-active { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-    .status-new { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-    .status-reviewed { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
-    .btn-action-sm {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 4px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      transition: all 0.2s;
-    }
-    .btn-action-sm:hover {
-      background: #f16032;
-      border-color: #f16032;
-    }
-    .btn-logout {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-      margin-top: 10px;
-      width: 100%;
-      justify-content: center;
-    }
-    .btn-logout:hover {
-      background: #ef4444;
-      color: #fff;
-    }
-  </style>
 </head>
 <body>
 
   <div class="admin-layout">
     <!-- Sidebar Navigation -->
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="adminSidebar">
       <div class="sidebar-brand">
         <img src="/public/assets/media/logo.png" alt="Brainova Logo">
         <div class="sidebar-brand-text">
@@ -81,8 +33,14 @@
       </div>
 
       <div class="sidebar-nav">
-        <span class="sidebar-nav-title">Core Operations</span>
-        <a href="#ledgerSection" class="sidebar-link active" onclick="switchAdminSection('ledgerSection')">
+        <span class="sidebar-nav-title">Analytics & Overview</span>
+        <a href="#overviewSection" class="sidebar-link active" onclick="switchAdminSection('overviewSection')">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Executive Dashboard</span>
+        </a>
+
+        <span class="sidebar-nav-title" style="margin-top: 10px;">Core Operations</span>
+        <a href="#ledgerSection" class="sidebar-link" onclick="switchAdminSection('ledgerSection')">
           <i class="fa-solid fa-user-graduate"></i>
           <span>Student Ledger</span>
         </a>
@@ -98,8 +56,10 @@
           <i class="fa-solid fa-chart-line"></i>
           <span>Exam Performance Grid</span>
         </a>
+
+        <span class="sidebar-nav-title" style="margin-top: 10px;">Platform Links</span>
         <a href="/olympiads.html" class="sidebar-link" target="_blank">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <i class="fa-solid fa-book-open-reader"></i>
           <span>Subject Catalog</span>
         </a>
         <a href="/exam.html" class="sidebar-link" target="_blank">
@@ -107,7 +67,7 @@
           <span>Mock Exam Engine</span>
         </a>
 
-        <span class="sidebar-nav-title" style="margin-top: 15px;">Data & Export</span>
+        <span class="sidebar-nav-title" style="margin-top: 10px;">Data & Export</span>
         <a href="/api/admin/export-csv?type=full_ledger" class="sidebar-link">
           <i class="fa-solid fa-file-csv" style="color: #10b981;"></i>
           <span>Export Students (CSV)</span>
@@ -121,7 +81,7 @@
           <span>Export Inquiries (CSV)</span>
         </a>
 
-        <span class="sidebar-nav-title" style="margin-top: 15px;">System & Public</span>
+        <span class="sidebar-nav-title" style="margin-top: 10px;">System & Public</span>
         <a href="/" class="sidebar-link" target="_blank">
           <i class="fa-solid fa-house"></i>
           <span>Public Website</span>
@@ -137,7 +97,7 @@
           <div class="admin-avatar">A</div>
           <div class="user-info">
             <div style="font-weight: 700; font-size: 0.88rem; color: #fff;">Super Admin</div>
-            <div style="font-size: 0.75rem; color: #94a3b8;">admin@brainova.com</div>
+            <div style="font-size: 0.74rem; color: #94a3b8;">admin@brainova.com</div>
           </div>
         </div>
         <button type="button" class="btn-logout" id="btnAdminLogout">
@@ -146,77 +106,249 @@
       </div>
     </aside>
 
-    <!-- Main Dashboard Body -->
+    <!-- Main Dashboard Workspace -->
     <main class="admin-main">
       <!-- Topbar Header -->
       <header class="admin-topbar">
         <div class="admin-topbar-left">
-          <h1>National Olympiad Master Control</h1>
-          <p>Institutional Ledger, School Verification, Inquiries & Score Analytics</p>
+          <h1 id="topbarSectionTitle">
+            <i class="fa-solid fa-chart-pie" style="color: #f16032;"></i>
+            Executive Analytics Dashboard
+          </h1>
+          <p id="topbarSectionDesc">Live National Olympiad Intelligence, Growth Metrics & Visual Analytics</p>
         </div>
 
         <div class="admin-topbar-right">
-          <a href="/register.html?type=student" target="_blank" class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
+          <button type="button" class="btn-topbar-action btn-topbar-outline" onclick="refreshCurrentSection()">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+          <a href="/register.html?type=student" target="_blank" class="btn-topbar-action btn-topbar-orange">
             <i class="fa-solid fa-user-plus"></i> Add Student
           </a>
-          <a href="/register.html?type=school" target="_blank" class="btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">
+          <a href="/register.html?type=school" target="_blank" class="btn-topbar-action btn-topbar-outline">
             <i class="fa-solid fa-school"></i> Add School
           </a>
         </div>
       </header>
 
-      <!-- Dashboard Content -->
+      <!-- Dashboard Body Content -->
       <div class="admin-content">
 
-        <!-- Global Metrics Cards -->
-        <div class="metrics-row">
-          <div class="metric-card" onclick="switchAdminSection('ledgerSection')" style="cursor: pointer;">
-            <div class="metric-info">
-              <h6>Registered Students</h6>
-              <div class="metric-value" id="metricTotalStudents">--</div>
-              <div class="metric-trend"><i class="fa-solid fa-arrow-trend-up"></i> Active candidates</div>
+        <!-- ========================================================
+             SECTION 0: EXECUTIVE ANALYTICS DASHBOARD (With Charts)
+             ======================================================== -->
+        <div id="overviewSection">
+          
+          <!-- Top 4 Key Metric Cards -->
+          <div class="metrics-row">
+            <div class="metric-card card-orange" onclick="switchAdminSection('ledgerSection')" style="cursor: pointer;">
+              <div class="metric-info">
+                <h6>Registered Students</h6>
+                <div class="metric-value" id="dashTotalStudents">--</div>
+                <div class="metric-trend"><i class="fa-solid fa-arrow-trend-up"></i> Active candidates</div>
+              </div>
+              <div class="metric-icon-bubble bubble-orange">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
             </div>
-            <div class="metric-icon-bubble bubble-orange">
-              <i class="fa-solid fa-user-graduate"></i>
+
+            <div class="metric-card card-blue" onclick="switchAdminSection('schoolsSection')" style="cursor: pointer;">
+              <div class="metric-info">
+                <h6>Partner Schools</h6>
+                <div class="metric-value" id="dashTotalSchools">--</div>
+                <div class="metric-trend" style="color: #3b82f6;"><i class="fa-solid fa-building-columns"></i> Verified institutions</div>
+              </div>
+              <div class="metric-icon-bubble bubble-blue">
+                <i class="fa-solid fa-school"></i>
+              </div>
+            </div>
+
+            <div class="metric-card card-green" onclick="switchAdminSection('performanceSection')" style="cursor: pointer;">
+              <div class="metric-info">
+                <h6>Mock Exams Taken</h6>
+                <div class="metric-value" id="dashTotalExams">--</div>
+                <div class="metric-trend"><i class="fa-solid fa-circle-check"></i> <span id="dashPassRate">--%</span> Pass Rate</div>
+              </div>
+              <div class="metric-icon-bubble bubble-green">
+                <i class="fa-solid fa-clipboard-check"></i>
+              </div>
+            </div>
+
+            <div class="metric-card card-amber" onclick="switchAdminSection('inquiriesSection')" style="cursor: pointer;">
+              <div class="metric-info">
+                <h6>Contact Messages</h6>
+                <div class="metric-value" id="dashTotalInquiries">--</div>
+                <div class="metric-trend" style="color: #f59e0b;"><i class="fa-solid fa-envelope"></i> Inquiries received</div>
+              </div>
+              <div class="metric-icon-bubble bubble-amber">
+                <i class="fa-solid fa-comments"></i>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card" onclick="switchAdminSection('schoolsSection')" style="cursor: pointer;">
-            <div class="metric-info">
-              <h6>Partner Schools</h6>
-              <div class="metric-value" id="metricTotalSchools">--</div>
-              <div class="metric-trend"><i class="fa-solid fa-school"></i> Verified Institutions</div>
+          <!-- Quick Actions Bar -->
+          <div class="quick-actions-bar">
+            <a href="/register.html?type=student" target="_blank" class="quick-action-tile">
+              <i class="fa-solid fa-user-plus" style="color: #f16032;"></i>
+              <div class="tile-info">
+                <h5>Candidate Registration</h5>
+                <span>Enroll new student</span>
+              </div>
+            </a>
+
+            <a href="/register.html?type=school" target="_blank" class="quick-action-tile">
+              <i class="fa-solid fa-school" style="color: #3b82f6;"></i>
+              <div class="tile-info">
+                <h5>School Onboarding</h5>
+                <span>Add partner tenant</span>
+              </div>
+            </a>
+
+            <a href="/api/admin/export-csv?type=full_ledger" class="quick-action-tile">
+              <i class="fa-solid fa-file-csv" style="color: #10b981;"></i>
+              <div class="tile-info">
+                <h5>Institutional Export</h5>
+                <span>Download full CSV</span>
+              </div>
+            </a>
+
+            <a href="/exam.html" target="_blank" class="quick-action-tile">
+              <i class="fa-solid fa-stopwatch" style="color: #8b5cf6;"></i>
+              <div class="tile-info">
+                <h5>Mock Exam Engine</h5>
+                <span>Test simulation mode</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- Row 1: High-Impact Visual Charts Grid -->
+          <div class="charts-grid-2col">
+            <!-- Chart 1: Registration Velocity & Growth -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <i class="fa-solid fa-chart-line" style="color: #f16032; font-size: 1.15rem;"></i>
+                  <h3>Candidate & School Enrollment Growth</h3>
+                </div>
+                <span class="chart-badge">Timeline Trend</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chartGrowthTimeline"></canvas>
+              </div>
             </div>
-            <div class="metric-icon-bubble bubble-blue">
-              <i class="fa-solid fa-building-columns"></i>
+
+            <!-- Chart 2: Olympiad Subject Participation Breakdown -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <i class="fa-solid fa-chart-pie" style="color: #3b82f6; font-size: 1.15rem;"></i>
+                  <h3>Subject Participation Distribution</h3>
+                </div>
+                <span class="chart-badge">Active Olympiads</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chartSubjectDonut"></canvas>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card" onclick="switchAdminSection('performanceSection')" style="cursor: pointer;">
-            <div class="metric-info">
-              <h6>Exams Completed</h6>
-              <div class="metric-value" id="metricTotalExams">--</div>
-              <div class="metric-trend" style="color: #3b82f6;"><i class="fa-solid fa-circle-check"></i> Graded sessions</div>
+          <!-- Row 2: Secondary Visual Charts -->
+          <div class="charts-grid-2col">
+            <!-- Chart 3: Grade / Class Breakdown -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <i class="fa-solid fa-chart-simple" style="color: #10b981; font-size: 1.15rem;"></i>
+                  <h3>Candidate Distribution by Grade / Class</h3>
+                </div>
+                <span class="chart-badge">Classes 1 - 12</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chartGradeDistribution"></canvas>
+              </div>
             </div>
-            <div class="metric-icon-bubble bubble-green">
-              <i class="fa-solid fa-clipboard-check"></i>
+
+            <!-- Chart 4: Average Score Benchmark by Subject -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title">
+                  <i class="fa-solid fa-gauge" style="color: #f59e0b; font-size: 1.15rem;"></i>
+                  <h3>Subject Score Benchmarks & Averages</h3>
+                </div>
+                <span class="chart-badge">Performance %</span>
+              </div>
+              <div class="chart-container-box">
+                <canvas id="chartScoreBenchmark"></canvas>
+              </div>
             </div>
           </div>
 
-          <div class="metric-card" onclick="switchAdminSection('inquiriesSection')" style="cursor: pointer;">
-            <div class="metric-info">
-              <h6>Contact Messages</h6>
-              <div class="metric-value" id="metricTotalInquiries">--</div>
-              <div class="metric-trend" style="color: #f59e0b;"><i class="fa-solid fa-envelope"></i> Inquiries received</div>
+          <!-- Row 3: Live Real-Time Feeds (Students & Messages) -->
+          <div class="charts-grid-2col" style="margin-bottom: 0;">
+            <!-- Live Feed 1: Recent Candidate Enrollments -->
+            <div class="admin-card" style="margin-bottom: 0;">
+              <div class="admin-card-header">
+                <div class="admin-card-title">
+                  <i class="fa-solid fa-user-clock" style="color: #f16032;"></i>
+                  <h3>Recent Candidate Registrations</h3>
+                </div>
+                <button type="button" class="btn-topbar-action btn-topbar-outline" style="padding: 4px 10px; font-size: 0.75rem;" onclick="switchAdminSection('ledgerSection')">
+                  View All &rarr;
+                </button>
+              </div>
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Candidate Name</th>
+                      <th>Grade</th>
+                      <th>School Tenant</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashRecentStudentsTable">
+                    <tr><td colspan="5" style="text-align:center; padding: 20px;">Loading candidates...</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="metric-icon-bubble bubble-purple">
-              <i class="fa-solid fa-comments"></i>
+
+            <!-- Live Feed 2: Recent Contact Messages -->
+            <div class="admin-card" style="margin-bottom: 0;">
+              <div class="admin-card-header">
+                <div class="admin-card-title">
+                  <i class="fa-solid fa-envelope-open-text" style="color: #f59e0b;"></i>
+                  <h3>Recent Inquiries & Quotes</h3>
+                </div>
+                <button type="button" class="btn-topbar-action btn-topbar-outline" style="padding: 4px 10px; font-size: 0.75rem;" onclick="switchAdminSection('inquiriesSection')">
+                  View All &rarr;
+                </button>
+              </div>
+              <div class="admin-table-wrapper">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Sender</th>
+                      <th>Message Snippet</th>
+                      <th>Received</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashRecentInquiriesTable">
+                    <tr><td colspan="4" style="text-align:center; padding: 20px;">Loading messages...</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
+
         </div>
 
-        <!-- 1. Central Student Registration Ledger -->
-        <div class="admin-card" id="ledgerSection">
+        <!-- ========================================================
+             SECTION 1: STUDENT REGISTRATION LEDGER
+             ======================================================== -->
+        <div class="admin-card" id="ledgerSection" style="display: none;">
           <div class="admin-card-header">
             <div class="admin-card-title">
               <i class="fa-solid fa-id-card-clip" style="color: #f16032; font-size: 1.2rem;"></i>
@@ -279,7 +411,9 @@
           </div>
         </div>
 
-        <!-- 2. Partner Schools Directory -->
+        <!-- ========================================================
+             SECTION 2: PARTNER SCHOOLS DIRECTORY
+             ======================================================== -->
         <div class="admin-card" id="schoolsSection" style="display: none;">
           <div class="admin-card-header">
             <div class="admin-card-title">
@@ -340,7 +474,9 @@
           </div>
         </div>
 
-        <!-- 3. Contact Inquiries & Quick Quotes -->
+        <!-- ========================================================
+             SECTION 3: CONTACT INQUIRIES & QUOTES
+             ======================================================== -->
         <div class="admin-card" id="inquiriesSection" style="display: none;">
           <div class="admin-card-header">
             <div class="admin-card-title">
@@ -376,7 +512,9 @@
           </div>
         </div>
 
-        <!-- 4. Subject Grid Performance -->
+        <!-- ========================================================
+             SECTION 4: EXAM PERFORMANCE GRID
+             ======================================================== -->
         <div class="admin-card" id="performanceSection" style="display: none;">
           <div class="admin-card-header">
             <div class="admin-card-title">
@@ -432,7 +570,7 @@
 
   <!-- Student Inspection Modal -->
   <div class="modal-overlay" id="studentDetailModal">
-    <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-box">
       <div class="modal-header">
         <h3><i class="fa-solid fa-user-gear" style="color: #f16032; margin-right: 8px;"></i> Student Candidate Record</h3>
         <button class="modal-close" onclick="document.getElementById('studentDetailModal').classList.remove('active')">&times;</button>
@@ -442,7 +580,7 @@
           <!-- Filled dynamically -->
         </div>
         <div style="text-align: right; margin-top: 15px;">
-          <button type="button" class="btn-primary" onclick="document.getElementById('studentDetailModal').classList.remove('active')">
+          <button type="button" class="btn-topbar-action btn-topbar-orange" onclick="document.getElementById('studentDetailModal').classList.remove('active')">
             Close Record
           </button>
         </div>
@@ -450,7 +588,7 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Admin Controller JavaScript -->
   <script src="/js/admin.js"></script>
 </body>
 </html>
