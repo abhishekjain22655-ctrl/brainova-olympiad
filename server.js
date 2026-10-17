@@ -92,9 +92,9 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
         success: true,
-        message: 'Registration Successful!',
+        message: 'Registration Successful! Your Roll Number is ' + rollNumber,
         rollNumber: rollNumber,
-        link: '/admin'
+        link: '/login.html?registered=student&roll=' + rollNumber
       });
     }
 
@@ -114,8 +114,8 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
             Roll Number: ${rollNumber}
           </div>
           <div style="display:flex; gap:10px; justify-content:center;">
-            <a href="/admin" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">View in Admin Ledger</a>
-            <a href="/exam.html" class="btn" style="background:#f16032; color:#fff; padding:10px 20px; border-radius:8px;">Take Mock Exam</a>
+            <a href="/login.html?registered=student&roll=${rollNumber}" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Proceed to Login</a>
+            <a href="/" class="btn" style="background:#f16032; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
           </div>
         </div>
       </body>
@@ -177,9 +177,9 @@ app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
         success: true,
-        message: 'School Registered Successfully!',
+        message: 'School Registered Successfully! Your School Code is ' + schoolCode,
         schoolCode: schoolCode,
-        link: '/admin'
+        link: '/login.html?registered=school&code=' + schoolCode
       });
     }
 
@@ -197,7 +197,10 @@ app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
           <div style="background:#f1f5f9; padding:15px; border-radius:10px; font-size:22px; font-weight:bold; color:#f16032; margin:20px 0;">
             School Code: ${schoolCode}
           </div>
-          <a href="/admin" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Open Master Admin</a>
+          <div style="display:flex; gap:10px; justify-content:center;">
+            <a href="/login.html?registered=school&code=${schoolCode}" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Proceed to School Login</a>
+            <a href="/" class="btn" style="background:#f16032; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
+          </div>
         </div>
       </body>
       </html>

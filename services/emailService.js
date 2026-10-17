@@ -35,10 +35,12 @@ function createTransporter() {
     return null; // Safe fallback mode
   }
 
+  const cleanPass = pass.replace(/\s+/g, '');
+
   if (service.toLowerCase() === 'gmail') {
     return nodemailer.createTransport({
       service: 'gmail',
-      auth: { user, pass }
+      auth: { user, pass: cleanPass }
     });
   }
 
@@ -47,7 +49,7 @@ function createTransporter() {
     host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
     port: parseInt(process.env.SMTP_PORT || '587', 10),
     secure: process.env.SMTP_SECURE === 'true',
-    auth: { user, pass }
+    auth: { user, pass: cleanPass }
   });
 }
 
