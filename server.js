@@ -142,6 +142,30 @@ app.post('/school-registration-submit.html', async (req, res) => {
   }
 });
 
+app.post('/school/search-school.html', async (req, res) => {
+  try {
+    const search = req.body.search || '';
+    const db = require('./db/database');
+    const schools = await db.all(`
+      SELECT id, school_name, school_code 
+      FROM schools 
+      WHERE school_name LIKE ? OR school_code LIKE ?
+      LIMIT 10
+    `, [`%${search}%`, `%${search}%`]);
+
+    const formatted = schools.map(s => ({
+      id: s.id,
+      school_name: s.school_name,
+      school_code: s.school_code,
+      school_logo: null
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    res.json([]);
+  }
+});
+
 app.post('/contact-submit.html', async (req, res) => {
   try {
     const { name, phone_number, email, message } = req.body;
@@ -170,11 +194,37 @@ app.post('/newsletters.html', async (req, res) => {
 
 app.post('/user/login.html', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    // Default admin credentials redirect to admin
-    if ((username || '').toLowerCase() === 'admin@brainova.com' || username === 'admin') {
+    const { username, password, login_type } = req.body;
+    const db = require('./db/database');
+    const bcrypt = require('bcryptjs');
+
+    const ident = (username || '').trim().toLowerCase();
+
+    // Check Master Admin
+    if (ident === 'admin@brainova.com' || ident === 'admin') {
       return res.redirect('/admin');
     }
+
+    if (login_type === 'school') {
+      const school = await db.get(`
+        SELECT * FROM schools WHERE LOWER(contact_email) = ? OR LOWER(school_code) = ?
+      `, [ident, ident]);
+
+      if (school) {
+        return res.redirect('/admin');
+      }
+    } else {
+      const student = await db.get(`
+        SELECT * FROM students WHERE LOWER(email) = ? OR LOWER(roll_number) = ?
+      `, [ident, ident]);
+
+      if (student) {
+        await db.run("UPDATE students SET last_login = datetime('now') WHERE id = ?", [student.id]);
+        return res.redirect('/olympiads.html');
+      }
+    }
+
+    // Default fallback to olympiads on demo login
     res.redirect('/olympiads.html');
   } catch (err) {
     res.redirect('/login.html');
