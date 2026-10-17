@@ -246,7 +246,21 @@ async function seedInitialData() {
     [3, 'All', 'Who is widely recognized as the father of the Indian Constitution?', 'Mahatma Gandhi', 'Dr. B.R. Ambedkar', 'Jawaharlal Nehru', 'Sardar Vallabhbhai Patel', 'B', 'Dr. Bhimrao Ramji Ambedkar chaired the Drafting Committee.'],
     [3, 'All', 'Which river is the longest in peninsular India, often called the "Dakshin Ganga"?', 'Krishna', 'Mahanadi', 'Godavari', 'Cauvery', 'C', 'Godavari is the second longest river in India and largest in peninsular India.'],
     [3, 'All', 'What is the currency of Japan?', 'Yuan', 'Won', 'Yen', 'Ringgit', 'C', 'The official currency of Japan is the Japanese Yen (JPY).'],
-    [3, 'All', 'Which organelle is universally referred to as the powerhouse of the eukaryotic cell?', 'Ribosome', 'Mitochondria', 'Golgi Apparatus', 'Lysosome', 'B', 'Mitochondria produce ATP through cellular respiration.']
+    [3, 'All', 'Which organelle is universally referred to as the powerhouse of the eukaryotic cell?', 'Ribosome', 'Mitochondria', 'Golgi Apparatus', 'Lysosome', 'B', 'Mitochondria produce ATP through cellular respiration.'],
+
+    // Science (subject_id 4)
+    [4, 'All', 'What is the chemical formula for ordinary table salt?', 'NaCl', 'KCl', 'CaCO3', 'Na2SO4', 'A', 'Common table salt is composed of sodium and chlorine (NaCl).'],
+    [4, 'All', 'Which vital gas is produced by plants during oxygenic photosynthesis?', 'Carbon Dioxide', 'Oxygen', 'Nitrogen', 'Hydrogen', 'B', 'Plants release oxygen (O2) as a byproduct of splitting water in photosynthesis.'],
+    [4, 'All', 'What is the SI unit of electric current?', 'Volt', 'Ohm', 'Ampere', 'Watt', 'C', 'The SI base unit of electric current is the Ampere (A).'],
+    [4, 'All', 'Which planet in our solar system is famously known as the "Red Planet"?', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'B', 'Mars appears red due to extensive iron oxide (rust) on its surface.'],
+    [4, 'All', 'What is the approximate speed of light in a vacuum?', '300,000 km/s', '150,000 km/s', '30,000 km/s', '3,000,000 km/s', 'A', 'The speed of light in vacuum is approximately 299,792 km/s (3 x 10^8 m/s).'],
+
+    // Computer / Cyber (subject_id 5)
+    [5, 'All', 'What does the abbreviation CPU stand for in computer hardware?', 'Central Process Unit', 'Central Processing Unit', 'Computer Power Unit', 'Core Programming Unit', 'B', 'CPU stands for Central Processing Unit.'],
+    [5, 'All', 'Which network protocol encrypts data transmission for secure web browsing?', 'HTTP', 'FTP', 'HTTPS', 'SMTP', 'C', 'HTTPS (Hypertext Transfer Protocol Secure) encrypts web traffic using TLS/SSL.'],
+    [5, 'All', 'Which data structure operates on a Last-In, First-Out (LIFO) order?', 'Queue', 'Stack', 'Array', 'Linked List', 'B', 'A Stack operates strictly on a Last-In, First-Out (LIFO) basis.'],
+    [5, 'All', 'What binary value corresponds to the decimal number 10?', '1001', '1010', '1100', '1110', 'B', 'Decimal 10 in 8-4-2-1 binary code is 1010 (8 + 2).'],
+    [5, 'All', 'What does RAM stand for in computer systems?', 'Random Access Memory', 'Read Access Memory', 'Rapid Action Memory', 'Remote Available Memory', 'A', 'RAM stands for Random Access Memory, the primary volatile working memory.']
   ];
 
   for (const q of questions) {

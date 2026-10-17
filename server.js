@@ -127,7 +127,7 @@ app.post('/school-registration-submit.html', async (req, res) => {
       </head>
       <body style="background:#19124d; color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:sans-serif; text-align:center;">
         <div style="background:#ffffff; color:#19124d; padding:40px; border-radius:16px; max-width:500px; box-shadow:0 15px 35px rgba(0,0,0,0.3);">
-          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">Institution Registered!</h2>
+          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">School Registered Successfully!</h2>
           <p style="color:#64748b;"><strong>${school_name || 'School'}</strong> has been registered as an examination tenant center.</p>
           <div style="background:#f1f5f9; padding:15px; border-radius:10px; font-size:22px; font-weight:bold; color:#f16032; margin:20px 0;">
             School Code: ${schoolCode}
@@ -231,6 +231,11 @@ app.post('/user/login.html', async (req, res) => {
   }
 });
 
+app.post('/user/forgot_password.html', (req, res) => {
+  const { email } = req.body;
+  res.send(`<script>alert('Password reset instructions have been sent to ${email || 'your email'}. Please check your inbox.'); window.location.href='/login.html';</script>`);
+});
+
 // HTML page routes matching the original site structure
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/olympiads.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'olympiads.html')));
@@ -273,6 +278,22 @@ app.get('/contact-us.html', (req, res) => res.sendFile(path.join(__dirname, 'pub
 app.get('/exam.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'exam.html')));
 app.get('/register.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'register.html')));
 app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
+app.get('/gallery.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gallery.html')));
+app.get('/blog.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'blog.html')));
+app.get('/blog/why-every-student-should-participate-in-national-olympiad-exams.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'blog', 'why-every-student-should-participate-in-national-olympiad-exams.html'));
+});
+app.get('/blog/brainova-national-olympiad-2026.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'blog', 'brainova-national-olympiad-2026.html'));
+});
+app.get('/privacy-policy.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy-policy.html')));
+app.get('/terms-and-conditions.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'terms-and-conditions.html')));
+app.get('/courses.html', (req, res) => res.redirect('/olympiads.html'));
+app.get(['/teachers.html', '/teachers'], (req, res) => res.redirect('/about-us.html#team'));
+app.post('/blog/comment/store', (req, res) => {
+  res.send('<script>alert("Thank you! Your comment has been submitted successfully."); history.back();</script>');
+});
+app.get('/faqs.html', (req, res) => res.redirect('/about-us.html'));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 

@@ -20,11 +20,35 @@ router.get('/subjects', async (req, res) => {
   }
 });
 
+// Helper to resolve subject by slug or friendly alias
+async function resolveSubject(slug) {
+  if (!slug) return null;
+  const direct = await get('SELECT * FROM subjects WHERE slug = ?', [slug]);
+  if (direct) return direct;
+
+  const aliasMap = {
+    'maths': 'math-olympiad',
+    'math': 'math-olympiad',
+    'mathematics': 'math-olympiad',
+    'science': 'science-olympiad',
+    'english': 'english-olympiad',
+    'gk': 'gk-olympiad',
+    'general-knowledge': 'gk-olympiad',
+    'cyber': 'computer-olympiad',
+    'computer': 'computer-olympiad'
+  };
+  const mapped = aliasMap[slug.toLowerCase()];
+  if (mapped) {
+    return await get('SELECT * FROM subjects WHERE slug = ?', [mapped]);
+  }
+  return null;
+}
+
 // 2. Get questions for an Olympiad exam session
 router.get('/questions/:subjectSlug', async (req, res) => {
   try {
     const { subjectSlug } = req.params;
-    const subject = await get('SELECT * FROM subjects WHERE slug = ?', [subjectSlug]);
+    const subject = await resolveSubject(subjectSlug);
     if (!subject) {
       return res.status(404).json({ success: false, message: 'Subject not found.' });
     }
@@ -66,7 +90,7 @@ router.post('/submit', async (req, res) => {
       time_taken_seconds
     } = req.body;
 
-    const subject = await get('SELECT * FROM subjects WHERE slug = ?', [subject_slug]);
+    const subject = await resolveSubject(subject_slug);
     if (!subject) {
       return res.status(404).json({ success: false, message: 'Invalid examination subject.' });
     }
@@ -147,6 +171,8 @@ router.post('/submit', async (req, res) => {
     res.json({
       success: true,
       message: 'Exam submitted and graded successfully.',
+      score: calculatedScore,
+      percentage: percentage,
       scorecard: {
         attempt_id: attemptRecord.lastID,
         student_name: student.full_name,
