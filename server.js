@@ -234,11 +234,32 @@ app.post('/user/login.html', async (req, res) => {
 // HTML page routes matching the original site structure
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/olympiads.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'olympiads.html')));
-app.get('/science-olympiad.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'science-olympiad.html')));
-app.get('/math-olympiad.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'math-olympiad.html')));
-app.get('/english-olympiad.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'english-olympiad.html')));
-app.get('/gk-olympiad.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'gk-olympiad.html')));
-app.get('/computer-olympiad.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'computer-olympiad.html')));
+
+// Olympiad Subject Routes (Both root-level and /exam/... paths)
+const serveMath = (req, res) => res.sendFile(path.join(__dirname, 'public', 'math-olympiad.html'));
+const serveScience = (req, res) => res.sendFile(path.join(__dirname, 'public', 'science-olympiad.html'));
+const serveEnglish = (req, res) => res.sendFile(path.join(__dirname, 'public', 'english-olympiad.html'));
+const serveGK = (req, res) => res.sendFile(path.join(__dirname, 'public', 'gk-olympiad.html'));
+const serveCyber = (req, res) => res.sendFile(path.join(__dirname, 'public', 'computer-olympiad.html'));
+
+app.get('/math-olympiad.html', serveMath);
+app.get('/exam/nationl-maths-olympiad.html', serveMath);
+app.get('/exam/national-maths-olympiad.html', serveMath);
+
+app.get('/science-olympiad.html', serveScience);
+app.get('/exam/national-science-olympiad.html', serveScience);
+
+app.get('/english-olympiad.html', serveEnglish);
+app.get('/exam/national-english-olympiad.html', serveEnglish);
+
+app.get('/gk-olympiad.html', serveGK);
+app.get('/exam/national-general-knowledge-olympiad-new.html', serveGK);
+app.get('/exam/national-general-knowledge-olympiad.html', serveGK);
+
+app.get('/computer-olympiad.html', serveCyber);
+app.get('/exam/national-cyber-olympiad.html', serveCyber);
+app.get('/exam/national-computer-olympiad.html', serveCyber);
+
 app.get('/olympiads-details.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'olympiads-details.html')));
 app.get('/olympaid-fee-structure.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'olympaid-fee-structure.html')));
 app.get('/olympiad-schedule.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'olympiad-schedule.html')));
