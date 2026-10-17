@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Examination Room | Brainova National Olympiad</title>
+  
+  <link rel="shortcut icon" type="image/png" href="/assets/images/logo.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      user-select: none;
+    }
+    .exam-header {
+      background: #110d33;
+      color: #ffffff;
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+    .exam-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .exam-logo img {
+      height: 40px;
+    }
+    .exam-subject-badge {
+      background: rgba(241, 96, 50, 0.2);
+      border: 1px solid rgba(241, 96, 50, 0.4);
+      color: #ffa182;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .exam-candidate-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .candidate-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+    }
+    .candidate-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #f16032;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    /* Timer Widget */
+    .timer-widget {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .timer-widget i {
+      color: #f16032;
+    }
+    .timer-time {
+      font-family: monospace;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
+    }
+    /* Progress bar */
+    .exam-progress-track {
+      height: 4px;
+      background: #334155;
+      width: 100%;
+    }
+    .exam-progress-bar {
+      height: 100%;
+      background: #10b981;
+      width: 100%;
+      transition: width 1s linear;
+    }
+    /* Exam Layout */
+    .exam-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      max-width: 1300px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+    /* Question Box */
+    .question-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      min-height: 540px;
+    }
+    .question-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+    .q-number-badge {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #19124d;
+    }
+    .q-marks-badge {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+    }
+    .question-content {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    /* Options list */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex-grow: 1;
+    }
+    .exam-option-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .exam-option-card:hover {
+      border-color: #f16032;
+      background: #fffaf7;
+    }
+    .exam-option-card.selected {
+      border-color: #f16032;
+      background: rgba(241, 96, 50, 0.08);
+      box-shadow: 0 0 0 1px #f16032;
+    }
+    .exam-option-card input[type="radio"] {
+      display: none;
+    }
+    .option-key {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .exam-option-card.selected .option-key {
+      background: #f16032;
+      color: #ffffff;
+    }
+    .option-label {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    /* Action Controls Bar */
+    .exam-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      margin-top: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    /* Palette Card */
+    .palette-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      padding: 24px;
+      height: fit-content;
+    }
+    .palette-header {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #19124d;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .palette-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.78rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #475569;
+    }
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+    }
+    .dot-answered { background: #10b981; }
+    .dot-review { background: #8b5cf6; }
+    .dot-not-answered { background: #f59e0b; }
+    .dot-not-visited { background: #e2e8f0; }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .q-palette-btn {
+      aspect-ratio: 1;
+      border: 1.5px solid transparent;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .q-palette-btn.not-visited {
+      background: #f1f5f9;
+      color: #64748b;
+      border-color: #e2e8f0;
+    }
+    .q-palette-btn.answered {
+      background: #10b981;
+      color: #ffffff;
+    }
+    .q-palette-btn.review {
+      background: #8b5cf6;
+      color: #ffffff;
+    }
+    .q-palette-btn.visited-unanswered {
+      background: #fef3c7;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+    .q-palette-btn.current {
+      border: 2px solid #2563eb !important;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+    }
+    /* Scorecard Modal Specifics */
+    .scorecard-header-banner {
+      background: linear-gradient(135deg, #110d33 0%, #19124d 100%);
+      color: #fff;
+      padding: 30px;
+      text-align: center;
+    }
+    .score-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(241, 96, 50, 0.15);
+      border: 3px solid #f16032;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 15px auto;
+    }
+    .grade-pill {
+      display: inline-block;
+      padding: 4px 16px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+    .grade-gold { background: #fef3c7; color: #b45309; }
+    .grade-silver { background: #e2e8f0; color: #334155; }
+    .grade-bronze { background: #ffedd5; color: #9a3412; }
+    .grade-pass { background: #dbeafe; color: #1e40af; }
+
+    .review-item {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 10px;
+      background: #fafafa;
+      font-size: 0.88rem;
+    }
+    .review-item.item-correct { border-left: 4px solid #10b981; }
+    .review-item.item-wrong { border-left: 4px solid #ef4444; }
+    .review-item.item-unanswered { border-left: 4px solid #94a3b8; }
+    .review-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .review-explanation {
+      background: #ffffff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px dashed #cbd5e1;
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: #475569;
+    }
+
+    @media (max-width: 900px) {
+      .exam-container {
+        grid-template-columns: 1fr;
+      }
+      .exam-candidate-info {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Exam Top Header -->
+  <header class="exam-header">
+    <div class="exam-header-left">
+      <a href="/" class="exam-logo">
+        <img src="/assets/images/logo.png" alt="Brainova Logo">
+      </a>
+      <span class="exam-subject-badge" id="examSubjectTitle">Loading Exam...</span>
+    </div>
+
+    <div class="exam-candidate-info">
+      <div class="candidate-pill">
+        <div class="candidate-avatar"><i class="fa-solid fa-user"></i></div>
+        <div>
+          <div style="font-weight: 700;" id="examCandidateName">Guest Candidate</div>
+          <small style="color: #cbd5e1;" id="examCandidateRoll">BNO-2026-DEMO</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="timer-widget">
+      <i class="fa-solid fa-clock"></i>
+      <span class="timer-time" id="examTimerDisplay">00:00</span>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="exam-progress-track">
+    <div class="exam-progress-bar" id="timerProgressBar"></div>
+  </div>
+
+  <!-- Main Exam Platform Container -->
+  <div class="exam-container">
+    <!-- Question Arena -->
+    <div class="question-card">
+      <div class="question-top-bar">
+        <div class="q-number-badge">Question <span id="currentQNum">1</span> of <span id="examTotalQCount">15</span></div>
+        <div class="q-marks-badge" id="currentQMarks">+4 Marks</div>
+      </div>
+
+      <div class="question-content" id="questionContentText">
+        Loading question content...
+      </div>
+
+      <div class="options-grid" id="questionOptionsContainer">
+        <!-- Dynamically rendered radio choices -->
+      </div>
+
+      <div class="exam-controls-bar">
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-outline" id="btnPrevQ" disabled>
+            <i class="fa-solid fa-chevron-left"></i> Previous
+          </button>
+          <button type="button" class="btn-outline" id="btnReviewQ" style="border-color: #8b5cf6; color: #8b5cf6;">
+            <i class="fa-solid fa-bookmark"></i> Mark for Review
+          </button>
+          <button type="button" class="btn-outline" id="btnClearQ" style="border-color: #94a3b8; color: #64748b;">
+            <i class="fa-solid fa-rotate-left"></i> Clear
+          </button>
+        </div>
+
+        <div>
+          <button type="button" class="btn-primary" id="btnNextQ">
+            Save & Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Palette Sidebar -->
+    <div class="palette-card">
+      <div class="palette-header">
+        <span>Question Palette</span>
+        <button type="button" class="btn-pill-sm btn-student-reg" id="btnFinalSubmitExam" style="padding: 6px 14px; font-size: 0.8rem;">
+          <i class="fa-solid fa-paper-plane"></i> Submit
+        </button>
+      </div>
+
+      <div class="palette-legend">
+        <div class="legend-item"><div class="legend-dot dot-answered"></div> Answered (<span id="countAnswered">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot dot-review"></div> Review (<span id="countReview">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot dot-not-answered"></div> Not Answered (<span id="countNotAnswered">0</span>)</div>
+        <div class="legend-item"><div class="legend-dot dot-not-visited"></div> Not Visited</div>
+      </div>
+
+      <div class="palette-grid" id="questionPaletteGrid">
+        <!-- Rendered numbers -->
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; font-size: 0.8rem; color: #64748b;">
+        <i class="fa-solid fa-shield" style="color: #f16032;"></i> Full-screen proctoring active. Responses are automatically saved to your ledger.
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Confirmation Modal -->
+  <div class="modal-overlay" id="confirmModalOverlay">
+    <div class="modal-box" style="max-width: 480px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; background: #19124d;">
+        <h3><i class="fa-solid fa-circle-question" style="color: #f16032; margin-right: 8px;"></i> Submit Examination?</h3>
+      </div>
+      <div class="modal-body" style="padding: 30px;">
+        <p style="color: #475569; font-size: 1rem; margin-bottom: 20px;">
+          You have answered <strong><span id="confirmAnsCount">0</span></strong> questions, with <strong><span id="confirmUnansCount">0</span></strong> remaining unanswered.
+        </p>
+        <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 24px;">
+          Once submitted, your responses will be evaluated instantly and your National Scorecard will be recorded.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button type="button" class="btn-outline" id="btnCancelSubmit">Return to Exam</button>
+          <button type="button" class="btn-primary" id="btnConfirmSubmit">Confirm & Submit Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instant Automated Scorecard Modal -->
+  <div class="modal-overlay" id="scorecardModalOverlay">
+    <div class="modal-box" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+      <div class="scorecard-header-banner">
+        <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">National Olympiad Scorecard</h2>
+        <p style="color: #cbd5e1; font-size: 0.92rem;">Official Automated Performance Evaluation 2026</p>
+
+        <div class="score-circle">
+          <span style="font-size: 1.8rem; font-weight: 800; color: #ffffff; line-height: 1;" id="resPercentage">0%</span>
+          <span style="font-size: 0.72rem; color: #ffa182; font-weight: 700; text-transform: uppercase;">Percentile</span>
+        </div>
+
+        <div>
+          <span class="grade-pill grade-gold" id="resGradeBadge">Distinction</span>
+        </div>
+      </div>
+
+      <div class="modal-body" style="padding: 26px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 24px; text-align: center;">
+          <div>
+            <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Score Achieved</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: #1e1b4b;" id="resScoreFraction">0 / 60</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">National Standing</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: #f16032;" id="resPercentile">95th</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Time Taken</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: #10b981;" id="resTimeTaken">0m 0s</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
+          <div><strong>Candidate:</strong> <span id="resStudentName">Candidate</span></div>
+          <div><strong>Roll Number:</strong> <span id="resRollNumber">BNO-2026-001</span></div>
+          <div><strong>Subject:</strong> <span id="resSubjectName">Mathematics</span></div>
+          <div><strong>Breakdown:</strong> <span id="resCorrectCount" style="color: #10b981; font-weight: 700;">0</span> Correct / <span id="resWrongCount" style="color: #ef4444; font-weight: 700;">0</span> Incorrect / <span id="resUnansweredCount" style="color: #64748b; font-weight: 700;">0</span> Unattempted</div>
+        </div>
+
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: #19124d; margin-bottom: 12px;">Detailed Question-by-Question Review</h4>
+        <div id="scorecardDetailedReview" style="max-height: 240px; overflow-y: auto; margin-bottom: 20px;">
+          <!-- Accordion of questions with solutions -->
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <a href="/admin" class="btn-outline">View in Admin Ledger</a>
+          <a href="/olympiads.html" class="btn-primary">Return to Portals</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/exam.js"></script>
+</body>
+</html>

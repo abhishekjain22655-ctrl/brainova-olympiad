@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Login | Brainova National Olympiad</title>
+  
+  <meta name="description" content="Login to Brainova National Olympiad candidate or school portal.">
+  <link rel="shortcut icon" type="image/png" href="/assets/images/logo.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    .login-wrapper {
+      max-width: 520px;
+      margin: 50px auto 80px auto;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+    .login-header-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .login-tab-btn {
+      padding: 16px 20px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #64748b;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .login-tab-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+    }
+    .login-body {
+      padding: 36px 36px;
+    }
+    .demo-credentials-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 24px;
+    }
+    .demo-credentials-box h5 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #19124d;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .demo-btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-demo-fill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-demo-fill:hover {
+      background: var(--navy);
+      color: #ffffff;
+      border-color: var(--navy);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar-one">
+    <div class="container">
+      <div class="topbar-inner">
+        <div class="topbar-info">
+          <a href="mailto:info@brainovanationalolympiad.com">
+            <i class="fa-solid fa-envelope"></i>
+            <span>info@brainovanationalolympiad.com</span>
+          </a>
+          <a href="tel:+918587929298">
+            <i class="fa-solid fa-phone"></i>
+            <span>+91 8587929298</span>
+          </a>
+        </div>
+        <div class="topbar-actions">
+          <a href="/register.html" class="btn-pill-sm btn-student-reg">
+            <i class="fa-solid fa-user-plus"></i> Register
+          </a>
+          <a href="/admin" class="btn-admin">
+            <i class="fa-solid fa-shield-halved"></i> Master Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="header-logo">
+          <img src="/assets/images/logo.png" alt="Brainova National Olympiad Logo">
+        </a>
+
+        <nav class="main-nav">
+          <ul class="nav-links">
+            <li class="nav-item"><a href="/">HOME</a></li>
+            <li class="nav-item"><a href="/olympiads.html">OLYMPIADS</a></li>
+            <li class="nav-item"><a href="/exam.html" style="color: #f16032;"><i class="fa-solid fa-stopwatch"></i> LIVE MOCK EXAM</a></li>
+            <li class="nav-item"><a href="/admin">ADMIN PANEL</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form Container -->
+  <div class="container">
+    <div class="login-wrapper">
+      <div class="login-header-tabs">
+        <button type="button" class="login-tab-btn active" id="tabLoginStudent">
+          <i class="fa-solid fa-user-graduate"></i> Student Login
+        </button>
+        <button type="button" class="login-tab-btn" id="tabLoginSchool">
+          <i class="fa-solid fa-school"></i> School Portal
+        </button>
+      </div>
+
+      <div class="login-body">
+        <form id="unifiedLoginForm">
+          <input type="hidden" name="login_type" id="hiddenLoginType" value="student">
+
+          <div class="form-group">
+            <label id="loginIdentLabel">Roll Number or Registered Email</label>
+            <input type="text" name="username" id="loginUsernameInput" class="form-control" placeholder="e.g. BNO-2026-001 or aarav.sharma@gmail.com" required>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" id="loginPasswordInput" class="form-control" placeholder="Enter password" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 13px; font-size: 1rem; margin-top: 10px;">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In to Portal
+          </button>
+        </form>
+
+        <!-- Evaluator One-Click Demo Helper -->
+        <div class="demo-credentials-box">
+          <h5><i class="fa-solid fa-wand-magic-sparkles" style="color: #f16032;"></i> Evaluator Demo Quick Autofill:</h5>
+          <div class="demo-btn-group">
+            <button type="button" class="btn-demo-fill" onclick="fillDemo('admin')">
+              <i class="fa-solid fa-shield"></i> Master Admin
+            </button>
+            <button type="button" class="btn-demo-fill" onclick="fillDemo('student')">
+              <i class="fa-solid fa-graduation-cap"></i> Student (Aarav)
+            </button>
+            <button type="button" class="btn-demo-fill" onclick="fillDemo('school')">
+              <i class="fa-solid fa-building-columns"></i> School (DPS)
+            </button>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: #64748b;">
+          Don't have an account yet? <a href="/register.html" style="color: var(--primary); font-weight: 700;">Register Here</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

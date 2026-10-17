@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.log
+brainova.db
+.DS_Store
+Thumbs.db

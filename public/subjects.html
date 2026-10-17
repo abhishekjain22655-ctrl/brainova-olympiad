@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olympiad Subjects & Syllabus Portals | Brainova National Olympiad</title>
+  
+  <meta name="description" content="Explore syllabi, curriculum, sample question papers, and guidelines for Mathematics, English, GK, Science, and Computer Olympiads for Classes 1 to 12.">
+  <link rel="shortcut icon" type="image/png" href="/assets/images/logo.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <style>
+    .subject-page-hero {
+      background: linear-gradient(135deg, #110d33 0%, #19124d 100%);
+      color: #ffffff;
+      padding: 60px 0 40px 0;
+      text-align: center;
+    }
+    .subject-nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+    .subject-tab-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .subject-tab-btn:hover, .subject-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .subject-content-panel {
+      display: none;
+      padding: 50px 0 70px 0;
+    }
+    .subject-content-panel.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .subject-detail-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+    }
+    .syllabus-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 30px;
+    }
+    .syllabus-class-badge {
+      display: inline-block;
+      background: rgba(241, 96, 50, 0.1);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 14px;
+    }
+    .syllabus-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .syllabus-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: #334155;
+    }
+    .syllabus-item i {
+      color: #10b981;
+    }
+    .sidebar-widget {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--card-shadow);
+      margin-bottom: 25px;
+    }
+    .widget-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 18px;
+      border-bottom: 2px solid rgba(241, 96, 50, 0.2);
+      padding-bottom: 8px;
+    }
+    @media (max-width: 900px) {
+      .subject-detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .syllabus-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar-one">
+    <div class="container">
+      <div class="topbar-inner">
+        <div class="topbar-info">
+          <a href="mailto:info@brainovanationalolympiad.com">
+            <i class="fa-solid fa-envelope"></i>
+            <span>info@brainovanationalolympiad.com</span>
+          </a>
+          <a href="tel:+918587929298">
+            <i class="fa-solid fa-phone"></i>
+            <span>+91 8587929298</span>
+          </a>
+        </div>
+        <div class="topbar-actions">
+          <a href="/register.html?type=school" class="btn-pill-sm btn-school-reg">
+            <i class="fa-solid fa-school"></i> School Registration
+          </a>
+          <a href="/register.html?type=student" class="btn-pill-sm btn-student-reg">
+            <i class="fa-solid fa-user-graduate"></i> Student Registration
+          </a>
+          <a href="/admin" class="btn-admin">
+            <i class="fa-solid fa-shield-halved"></i> Master Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="header">
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="header-logo">
+          <img src="/assets/images/logo.png" alt="Brainova National Olympiad Logo">
+        </a>
+
+        <nav class="main-nav">
+          <ul class="nav-links">
+            <li class="nav-item"><a href="/">HOME</a></li>
+            <li class="nav-item"><a href="/olympiads.html" style="color: var(--primary);">OLYMPIADS</a></li>
+            <li class="nav-item"><a href="/exam.html" style="color: #f16032;"><i class="fa-solid fa-stopwatch"></i> LIVE MOCK EXAM</a></li>
+            <li class="nav-item"><a href="/admin">ADMIN PANEL</a></li>
+            <li class="nav-item"><a href="/login.html">LOGIN</a></li>
+          </ul>
+
+          <div class="header-buttons">
+            <a href="/register.html" class="btn-primary">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> Register Now
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Header & Tab Buttons -->
+  <section class="subject-page-hero">
+    <div class="container">
+      <span class="section-tag" style="color: #ffa182;">Academic Disciplines</span>
+      <h1 style="font-size: 2.6rem; font-weight: 800; margin-bottom: 12px;">Olympiad Subject Portals</h1>
+      <p style="color: #cbd5e1; max-width: 650px; margin: 0 auto;">
+        Detailed curriculum guidelines, question formats, sample papers, and direct links to live timed practice exams.
+      </p>
+
+      <div class="subject-nav-tabs">
+        <button class="subject-tab-btn active" data-target="panel-math">
+          <i class="fa-solid fa-calculator"></i> Mathematics
+        </button>
+        <button class="subject-tab-btn" data-target="panel-english">
+          <i class="fa-solid fa-spell-check"></i> English
+        </button>
+        <button class="subject-tab-btn" data-target="panel-gk">
+          <i class="fa-solid fa-globe"></i> General Knowledge
+        </button>
+        <button class="subject-tab-btn" data-target="panel-science">
+          <i class="fa-solid fa-flask"></i> Science
+        </button>
+        <button class="subject-tab-btn" data-target="panel-computer">
+          <i class="fa-solid fa-laptop-code"></i> Computer & Cyber
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subject Panel 1: Mathematics -->
+  <div class="subject-content-panel active" id="panel-math">
+    <div class="container">
+      <div class="subject-detail-grid">
+        <div>
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Classes 1 - 5 (Primary Section)</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">Foundational Mathematics & Number Operations</h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-top: 6px;">
+              Designed to reinforce spatial logic, mental arithmetic, and visual pattern recognition.
+            </p>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Number Systems & Place Values</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Mental Addition & Subtraction</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> 2D Shapes & Spatial Geometry</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Measurements: Time, Mass, Money</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Basic Fractions & Pictographs</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Number Sequences & Symmetry</div>
+            </div>
+          </div>
+
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Classes 6 - 10 (Secondary Section)</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">Advanced Problem Solving & Algebraic Concepts</h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-top: 6px;">
+              Emphasizes multi-step deduction, theorems, algebraic manipulation, and geometric proofs.
+            </p>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Rational Numbers, Exponents & Roots</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Linear Equations & Polynomials</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Triangles, Circles & Quadrilaterals</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Coordinate Geometry & Trigonometry</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Mensuration (Volume & Surface Area)</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Probability & Descriptive Statistics</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sidebar-widget">
+            <h4 class="widget-title"><i class="fa-solid fa-sliders" style="color: #f16032;"></i> Exam Snapshot</h4>
+            <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.92rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Duration:</span>
+                <strong>30 Minutes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Questions:</span>
+                <strong>15 Multiple Choice</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Maximum Score:</span>
+                <strong>60 Marks (+4 / 0)</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Negative Marking:</span>
+                <strong style="color: #10b981;">No Negative Marking</strong>
+              </div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <a href="/exam.html?subject=math-olympiad" class="btn-primary" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-play"></i> Start Math Mock Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subject Panel 2: English -->
+  <div class="subject-content-panel" id="panel-english">
+    <div class="container">
+      <div class="subject-detail-grid">
+        <div>
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Grammar & Syntax Mastery</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">Language Proficiency & Structural Analysis</h3>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Parts of Speech & Tense Agreement</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Active & Passive Voice Transformations</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Direct & Indirect Reported Speech</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Prepositional Idioms & Phrasal Verbs</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Vocabulary: Synonyms, Antonyms, Analogies</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Unseen Comprehension Passages</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sidebar-widget">
+            <h4 class="widget-title"><i class="fa-solid fa-sliders" style="color: #f16032;"></i> Exam Snapshot</h4>
+            <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.92rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Duration:</span>
+                <strong>30 Minutes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Questions:</span>
+                <strong>15 Multiple Choice</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Maximum Score:</span>
+                <strong>60 Marks (+4 / 0)</strong>
+              </div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <a href="/exam.html?subject=english-olympiad" class="btn-primary" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-play"></i> Start English Mock Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subject Panel 3: GK -->
+  <div class="subject-content-panel" id="panel-gk">
+    <div class="container">
+      <div class="subject-detail-grid">
+        <div>
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Current & Static Knowledge</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">General Awareness & Scientific Curiosities</h3>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Indian Constitution, Polity & Governance</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> World Geography, Continents & Oceans</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Space Explorations (ISRO / NASA)</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Inventions, Discoveries & Nobel Laureates</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Environmental Awareness & Biodiversity</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Sports, Olympic Games & World Records</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sidebar-widget">
+            <h4 class="widget-title"><i class="fa-solid fa-sliders" style="color: #f16032;"></i> Exam Snapshot</h4>
+            <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.92rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Duration:</span>
+                <strong>25 Minutes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Questions:</span>
+                <strong>15 Multiple Choice</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Maximum Score:</span>
+                <strong>60 Marks (+4 / 0)</strong>
+              </div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <a href="/exam.html?subject=gk-olympiad" class="btn-primary" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-play"></i> Start GK Mock Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subject Panel 4: Science -->
+  <div class="subject-content-panel" id="panel-science">
+    <div class="container">
+      <div class="subject-detail-grid">
+        <div>
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Physics, Chemistry, Biology</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">Applied Scientific Inquiry</h3>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Forces, Motion & Laws of Gravitation</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Heat, Light Optics & Sound Waves</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Elements, Compounds & Chemical Reactions</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Cellular Biology, Tissues & Human Physiology</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Genetics, Heredity & Ecosystem Dynamics</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sidebar-widget">
+            <h4 class="widget-title"><i class="fa-solid fa-sliders" style="color: #f16032;"></i> Exam Snapshot</h4>
+            <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.92rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Duration:</span>
+                <strong>30 Minutes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Questions:</span>
+                <strong>15 Multiple Choice</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Maximum Score:</span>
+                <strong>60 Marks (+4 / 0)</strong>
+              </div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <a href="/exam.html?subject=science-olympiad" class="btn-primary" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-play"></i> Start Science Mock Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subject Panel 5: Computer -->
+  <div class="subject-content-panel" id="panel-computer">
+    <div class="container">
+      <div class="subject-detail-grid">
+        <div>
+          <div class="syllabus-box">
+            <span class="syllabus-class-badge">Digital Citizenship & Algorithms</span>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #19124d;">Computing Logic & Modern Technology</h3>
+            <div class="syllabus-list">
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Computer Hardware Architecture & CPU</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Operating Systems & File Systems</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Algorithms, Flowcharts & Computational Logic</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Internet, Networks & Cybersecurity Best Practices</div>
+              <div class="syllabus-item"><i class="fa-solid fa-circle-check"></i> Introduction to Python & Programming Syntax</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sidebar-widget">
+            <h4 class="widget-title"><i class="fa-solid fa-sliders" style="color: #f16032;"></i> Exam Snapshot</h4>
+            <div style="display: flex; flex-direction: column; gap: 14px; font-size: 0.92rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Duration:</span>
+                <strong>30 Minutes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Questions:</span>
+                <strong>15 Multiple Choice</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #64748b;">Maximum Score:</span>
+                <strong>60 Marks (+4 / 0)</strong>
+              </div>
+            </div>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+            <a href="/exam.html?subject=computer-olympiad" class="btn-primary" style="width: 100%; justify-content: center;">
+              <i class="fa-solid fa-play"></i> Start Computer Mock Exam
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Brainova National Olympiad. All subject portals are active and aligned with CBSE & ICSE syllabus.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Tab switching logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.subject-tab-btn');
+      const panels = document.querySelectorAll('.subject-content-panel');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+
+          tab.classList.add('active');
+          const targetId = tab.getAttribute('data-target');
+          const targetPanel = document.getElementById(targetId);
+          if (targetPanel) targetPanel.classList.add('active');
+        });
+      });
+
+      // Handle query parameter: ?subject=english-olympiad
+      const urlParams = new URLSearchParams(window.location.search);
+      const sub = urlParams.get('subject');
+      if (sub === 'english-olympiad') {
+        document.querySelector('[data-target="panel-english"]')?.click();
+      } else if (sub === 'gk-olympiad') {
+        document.querySelector('[data-target="panel-gk"]')?.click();
+      } else if (sub === 'science-olympiad') {
+        document.querySelector('[data-target="panel-science"]')?.click();
+      } else if (sub === 'computer-olympiad') {
+        document.querySelector('[data-target="panel-computer"]')?.click();
+      }
+    });
+  </script>
+</body>
+</html>
