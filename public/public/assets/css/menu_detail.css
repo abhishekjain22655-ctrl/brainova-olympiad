@@ -1,0 +1,1121 @@
+/*==============================
+ PRODUCT GALLERY
+==============================*/
+
+.product-detail{
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+
+.product-gallery{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    position:relative;
+}
+
+.main-image{
+    position:relative;
+    width:100%;
+    height:600px;
+    overflow:hidden;
+    border:1px solid #e8e8e8;
+    border-radius:12px;
+    background:#fff;
+    cursor:crosshair;
+}
+
+.main-image img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    transition:none;
+    transform-origin:center center;
+    user-select:none;
+}
+
+.main-image::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    border-radius:12px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.05) inset;
+}
+
+/*==============================
+ THUMBNAILS
+==============================*/
+
+.thumbnail-gallery{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.thumb{
+    width:95px;
+    height:95px;
+    overflow:hidden;
+    border-radius:10px;
+    border:2px solid #e5e5e5;
+    background:#fff;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.thumb:hover{
+    border-color:#d89a31;
+}
+
+.thumb.active{
+    border-color:#d89a31;
+    box-shadow:0 6px 18px rgba(216,154,49,.25);
+}
+
+
+/*====================================
+ PRODUCT IMAGE ZOOM EFFECT
+=====================================*/
+
+.main-image{
+    position: relative;
+    overflow: hidden;
+}
+
+.main-image img{
+
+    position: absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    transition:
+        transform .15s linear,
+        opacity .25s ease;
+
+    will-change: transform;
+
+    backface-visibility:hidden;
+
+    transform:scale(1);
+
+}
+
+
+/* Hover Shadow */
+
+.main-image:hover{
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.12);
+
+}
+
+
+/* Cursor */
+
+.main-image:hover img{
+
+    cursor: zoom-in;
+
+}
+
+
+/* Active Thumbnail */
+
+.thumb.active{
+
+    border:2px solid #D79C2F;
+
+    transform:translateY(-2px);
+
+}
+
+.thumb{
+
+    transition:.25s;
+
+}
+
+.thumb:hover{
+
+    border-color:#D79C2F;
+
+    transform:translateY(-2px);
+
+}
+
+
+/* Thumbnail Image */
+
+.thumb img{
+
+    transition:.3s;
+
+}
+
+.thumb:hover img{
+
+    transform:scale(1.08);
+
+}
+
+
+
+/* Smooth Fade While Changing */
+
+.main-image img.change{
+
+    opacity:.5;
+
+}
+
+
+
+/* Loading Effect */
+
+.main-image.loading::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(255,255,255,.55);
+
+    z-index:2;
+
+}
+
+
+/* Desktop */
+
+@media(min-width:992px){
+
+.thumbnail-gallery{
+
+    justify-content:flex-start;
+
+}
+
+}
+
+
+
+/* Tablet */
+
+@media(max-width:991px){
+
+.main-image{
+
+    height:500px;
+
+}
+
+}
+
+
+
+/* Mobile */
+
+@media(max-width:767px){
+
+.main-image{
+
+    height:330px;
+
+}
+
+.thumbnail-gallery{
+
+    justify-content:center;
+
+    gap:10px;
+
+}
+
+.thumb{
+
+    width:72px;
+
+    height:72px;
+
+}
+
+}
+
+
+
+.product-card {
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    transition: transform .35s ease, box-shadow .35s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,.12);
+}
+
+.product-card__image {
+    position: relative;
+    height: 270px;
+    overflow: hidden;
+}
+
+.product-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+}
+
+.product-card:hover .product-card__image img {
+    transform: scale(1.06);
+}
+
+/* Card Content Area */
+.product-card__content {
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Yeh content ko push karega taaki button hamesha bottom me rahe */
+}
+
+.product-card__content h3 {
+    margin-bottom: 12px;
+}
+
+.product-card__content h3 a {
+    font-size: 20px;
+    color: #222;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.product-card__content h3 a:hover {
+    color: #c7844f; /* Hover par accent color */
+}
+
+.product-card__content p {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* View Details Button Styling */
+.product-card__btn {
+    margin-top: auto; /* Button ko auto bottom me align karega */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #c7844f;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 15px;
+    transition: gap 0.3s ease;
+}
+
+.product-card__btn:hover {
+    gap: 12px; /* Hover karne par arrow aage shift hoga */
+}
+
+/* Responsive Styles */
+@media(max-width: 767px) {
+    .product-card__image {
+        height: 220px;
+    }
+    .product-card__content {
+        padding: 20px;
+    }
+    .product-card__content h3 a {
+        font-size: 18px;
+    }
+    .product-card__content p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}
+.call-btn{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:7px 24px;
+    border:2px solid #d89c31;
+    border-radius:50px;
+    color:#222;
+    font-weight:600;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.call-btn span:first-child{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#d89c31;
+    color:#fff;
+    font-size:18px;
+}
+
+.call-btn:hover{
+    background:#d89c31;
+    color:#fff;
+}
+
+.call-btn:hover span:first-child{
+    background:#fff;
+    color:#d89c31;
+}
+
+
+/* Tablet */
+
+@media(max-width:991px){
+
+.product-buttons{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-top:35px;
+    flex-wrap:wrap;
+}
+.product-buttons .floens-btn,
+.call-btn{
+    width:100%;
+    justify-content:center;
+}
+
+}
+
+
+.product-buttons{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:nowrap;
+}
+
+.product-buttons .cus-btn{
+    flex:0 0 auto;
+    white-space:nowrap;
+}
+
+.product-buttons .call-btn{
+    /* flex:1; */
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    min-width:0;
+}
+
+.call-btn{
+    width:auto !important;
+    display:flex;
+    align-items:center;
+    border:2px solid #d89c31;
+    border-radius:50px;
+    padding:10px 25px;
+    background-color: #d89c31;
+    color: #fff;
+}
+
+.call-btn span:first-child{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#d89c31;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:12px;
+}
+
+@media(max-width:767px){
+
+.product-buttons{
+    flex-direction:column;
+    align-items:stretch;
+}
+
+.product-buttons .cus-btn,
+.product-buttons .call-btn{
+    width:100%;
+    justify-content:center;
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:576px){
+
+.product-buttons{
+    flex-direction:column;
+    align-items:stretch;
+}
+
+.product-buttons .floens-btn,
+.call-btn{
+    width:100%;
+    text-align:center;
+    justify-content:center;
+}
+
+.call-btn{
+    padding:12px 18px;
+    font-size:15px;
+}
+
+.call-btn span:first-child{
+    width:38px;
+    height:38px;
+    font-size:16px;
+}
+
+}
+
+/*==========================================
+            OWL DOTS
+==========================================*/
+
+.product-slider .owl-dots{
+
+    margin-top:30px;
+    text-align:center;
+
+}
+
+.product-slider .owl-dot span{
+
+    width:10px;
+    height:10px;
+    margin:5px;
+
+    background:#ccc!important;
+
+    transition:.3s;
+
+}
+
+.product-slider .owl-dot.active span{
+
+    width:32px;
+
+    border-radius:20px;
+
+    background:#d89c31!important;
+
+}
+
+
+/*==========================================
+        RESPONSIVE
+==========================================*/
+
+@media(max-width:1199px){
+
+.product-card__image{
+
+    height:240px;
+
+}
+
+}
+
+@media(max-width:991px){
+
+.product-slider{
+
+    padding:70px 0;
+
+}
+
+.product-card__image{
+
+    height:220px;
+
+}
+
+.product-card__content{
+
+    padding:20px;
+
+}
+
+.product-card__content h3 a{
+
+    font-size:22px;
+
+}
+
+}
+
+@media(max-width:767px){
+
+.product-card__image{
+
+    height:210px;
+
+}
+
+.product-card__content h3 a{
+
+    font-size:20px;
+
+}
+
+.product-card__content p{
+
+    font-size:15px;
+    line-height:26px;
+
+}
+
+}
+
+@media (max-width: 767px) {
+    .page-header .container {
+        padding-top: 38px;
+    }
+}
+
+
+
+
+
+
+/*====================================
+        MODAL LAYOUT
+====================================*/
+
+.dk-modal-wrapper{
+
+    display:grid;
+
+    grid-template-columns:42% 58%;
+
+    min-height:720px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+}
+
+
+/*====================================
+        LEFT PANEL
+====================================*/
+
+.dk-modal-left{
+
+    background:#17114b;
+
+    padding:65px 50px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+/* Background Circle */
+
+.dk-modal-left::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+
+    height:260px;
+
+    border:18px solid rgba(255,255,255,.05);
+
+    border-radius:50%;
+
+    right:-120px;
+
+    bottom:-120px;
+
+}
+
+.dk-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    background:#f16032;
+
+    color:#fff;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    padding:12px 20px;
+
+    border-radius:40px;
+
+    width:max-content;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+}
+
+.dk-badge i{
+
+    color:#f0b90b;
+
+}
+
+.dk-modal-left h2{
+
+    color:#fff;
+
+    font-size:58px;
+
+    font-weight:800;
+
+    line-height:1.12;
+
+    margin:40px 0 25px;
+
+}
+
+.dk-modal-left p{
+
+    color:#d9d9d9;
+
+    font-size:18px;
+
+    line-height:34px;
+
+    margin-bottom:45px;
+
+}
+
+
+/*====================================
+        RIGHT PANEL
+====================================*/
+
+.dk-modal-right{
+
+    background:#fff;
+
+    padding:60px;
+
+}
+
+.dk-small-title{
+
+    color:#0077b6;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    font-size:14px;
+
+    letter-spacing:1px;
+
+}
+
+.dk-modal-right h3{
+
+    font-size:48px;
+
+    font-weight:800;
+
+    color:#222;
+
+    margin:12px 0 35px;
+
+}
+
+/*====================================
+        COMPONENTS & CORRECTIONS
+====================================*/
+
+/* Form Inputs Modification */
+.dk-modal-right .form-control {
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 14px 20px;
+    font-size: 15px;
+    color: #333;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.dk-modal-right .form-control::placeholder {
+    color: #7a7a7a;
+}
+
+.dk-modal-right .form-control:focus {
+    border-color: #0077b6;
+    box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+}
+
+/* Contact Cards Styles */
+.dk-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dk-contact-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 8px;
+}
+
+.dk-contact-card .dk-icon {
+    width: 40px;
+    height: 40px;
+    background: #f16032; /* Slate/Teal variation based on image */
+    color: #ffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+    
+
+.dk-contact-card div h6 {
+    color: #fff;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.dk-contact-card div span {
+    display: none; /* As per the layout image, labels like 'Call Us' are hidden */
+}
+
+
+/* Submit Button Style */
+.dk-submit-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f16032; /* Dark Yellow / Mustard color */
+    color: #fff;
+    border: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 14px 20px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.dk-submit-btn:hover {
+    background: #d49a17;
+}
+
+.dk-submit-btn span {
+    background: #fff;
+    color: #333;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+
+/* Modal Top Right Close Button Positioning */
+.sis-quote-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sis-quote-close:hover {
+    background: #f8fafc;
+    color: #000;
+}
+
+/* Modal Content Base Reset */
+.sis-quote-modal .modal-content {
+    background: transparent;
+    position: relative;
+}
+
+.dk-modal-right {
+    background: #f7f7f5; /* Off-white color from screenshot */
+}
+
+
+/*====================================
+      RESPONSIVE MEDIA QUERIES
+====================================*/
+
+@media (max-width: 991px) {
+    /* ग्रिड को एक कॉलम (Stack) में बदलें */
+    .dk-modal-wrapper {
+        grid-template-columns: 1fr;
+        min-height: auto;
+    }
+
+    /* पैडिंग्स और फोंट्स को मोबाइल के हिसाब से एडजस्ट करें */
+    .dk-modal-left {
+        padding: 40px 30px;
+    }
+
+    .dk-modal-left h2 {
+        font-size: 38px; /* बड़े फोंट को छोटा किया */
+        margin: 25px 0 15px;
+    }
+
+    .dk-modal-left p {
+        font-size: 16px;
+        line-height: 26px;
+        margin-bottom: 30px;
+    }
+
+    .dk-modal-right {
+        padding: 40px 30px;
+    }
+
+    .dk-modal-right h3 {
+        font-size: 32px;
+        margin: 10px 0 25px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* छोटी स्क्रीन (जैसे फोन) के लिए क्लोज बटन की पोजीशन */
+    .sis-quote-close {
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    /* बूटस्ट्रैप की रो (Row) के अंदर इनपुट्स के बीच का गैप */
+    .dk-modal-right .col-md-6:last-child {
+        margin-top: 1rem; /* Full Name और Phone Number के बीच स्पेस */
+    }
+    
+    .dk-modal-left h2 {
+        font-size: 32px;
+    }
+    
+    .dk-modal-right h3 {
+        font-size: 28px;
+    }
+}
+
+
+.blog-card__image{
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    height: 280px; /* Apni requirement ke hisab se 250/280/300 */
+}
+
+.blog-card__image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: .4s ease;
+}
+
+.blog-card:hover .blog-card__image img{
+    transform: scale(1.08);
+}
+
+
+
+.section-title-box{
+    position:relative;
+}
+
+.section-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 18px;
+    background:#eef4ff;
+    color:#18124c;
+    border-radius:50px;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:18px;
+}
+
+.section-badge i{
+    color:#f16032;
+}
+
+.section-title{
+    font-size:48px;
+    font-weight:700;
+    line-height:1.2;
+    color:#18124c;
+    margin-bottom:20px;
+}
+
+.section-title span{
+    color:#f16032;
+}
+
+.section-divider{
+    width:90px;
+    height:4px;
+    background:#f16032;
+    border-radius:20px;
+}
+
+.section-content{
+    padding-left:35px;
+    border-left:3px solid #f16032;
+}
+
+.section-content p{
+    margin:0;
+    font-size:17px;
+    line-height:30px;
+    color:#666;
+}
+
+@media(max-width:991px){
+
+.section-title{
+    font-size:34px;
+}
+
+.section-content{
+    padding-left:0;
+    border-left:none;
+    border-top:3px solid #f16032;
+    padding-top:20px;
+}
+
+}
+
+@media(max-width:576px){
+
+.section-title{
+    font-size:28px;
+}
+
+.section-content p{
+    font-size:15px;
+    line-height:26px;
+    margin-bottom: 10px;
+}
+
+.section-badge{
+    font-size:13px;
+}
+
+}
+
+
+
+
+.program-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 14px;
+    background:#18124c;
+    color:#fff;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:18px;
+}
+
+.program-badge i{
+    color:#ffc107;
+}
+
+
+
+@media (max-width: 767px) {
+    .cus-btn {
+        line-height: 2;
+    }
+}
+
+.h-font{
+    font-size: 33px !important;
+}
+
+.sisf-sis-listing-items p span i {
+    font-size: 30px;
+    line-height: 40px;
+}

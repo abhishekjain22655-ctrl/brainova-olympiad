@@ -1,0 +1,104 @@
+.hero-banner {
+        position: relative;
+        width: 100%;
+    }
+
+    .min-vh-100-custom {
+        min-height: 700px;
+        padding-top: 100px;
+        padding-bottom: 80px;
+    }
+
+    .form-overlay-container {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    .hero-form {
+        pointer-events: auto;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 35px;
+        margin-top: 17px;
+        box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    /* --- CUSTOM ARROW BUTTONS STYLING --- */
+    .carousel-nav-controls {
+        position: absolute;
+        bottom: 50px;
+        left: 8.5%;
+        display: flex;
+        gap: 15px;
+        z-index: 20;
+    }
+
+    .carousel-control-prev-custom,
+    .carousel-control-next-custom {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .carousel-control-prev-custom:hover,
+    .carousel-control-next-custom:hover {
+        background: #ffffff;
+        color: #0f0b36;
+        transform: scale(1.05);
+    }
+
+    /* RESPONSIVE DESIGN ADJUSTMENTS FOR TABLETS & MOBILE */
+    @media (max-width: 991px) {
+        .hero-banner {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Carousel mobile screen par sabse pehle (Top Par) rahega */
+        #heroDynamicCarousel {
+            order: 1;
+        }
+
+        /* Content wrapper height constraints in responsive */
+        .min-vh-100-custom {
+            min-height: 520px !important;
+            padding-top: 60px;
+            padding-bottom: 100px;
+            /* Arrows ke liye bottom gap */
+        }
+
+        /* Form niche aane par proper spacing system (Upar aur Niche gaps ke sath) */
+        .form-overlay-container {
+            position: relative;
+            top: 0;
+            transform: none;
+            padding: 60px 0 80px 0;
+            /* Upar 60px aur Niche 80px padding space di hai */
+            background: #0f0b36;
+            order: 2;
+            pointer-events: auto;
+        }
+
+        .hero-form {
+            margin-top: 0;
+            /* Clear duplicate top absolute offsets */
+        }
+
+        .carousel-nav-controls {
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+        }
+    }
