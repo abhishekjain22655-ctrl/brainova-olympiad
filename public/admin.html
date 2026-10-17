@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Master Control Admin Panel | Brainova National Olympiad</title>
   
-  <link rel="shortcut icon" type="image/png" href="/assets/images/logo.png">
+  <link rel="shortcut icon" type="image/png" href="/public/assets/media/logo.png">
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +16,56 @@
   <!-- CSS Styles -->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-active { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .status-new { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .status-reviewed { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
+    .btn-action-sm {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    .btn-action-sm:hover {
+      background: #f16032;
+      border-color: #f16032;
+    }
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      margin-top: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-logout:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+  </style>
 </head>
 <body>
 
@@ -23,7 +73,7 @@
     <!-- Sidebar Navigation -->
     <aside class="admin-sidebar">
       <div class="sidebar-brand">
-        <img src="/assets/images/logo.png" alt="Brainova Logo">
+        <img src="/public/assets/media/logo.png" alt="Brainova Logo">
         <div class="sidebar-brand-text">
           <h2>BRAINOVA</h2>
           <span>MASTER CONTROL</span>
@@ -32,17 +82,25 @@
 
       <div class="sidebar-nav">
         <span class="sidebar-nav-title">Core Operations</span>
-        <a href="#ledgerSection" class="sidebar-link active">
-          <i class="fa-solid fa-table-list"></i>
-          <span>Registration Ledger</span>
+        <a href="#ledgerSection" class="sidebar-link active" onclick="switchAdminSection('ledgerSection')">
+          <i class="fa-solid fa-user-graduate"></i>
+          <span>Student Ledger</span>
         </a>
-        <a href="#performanceSection" class="sidebar-link">
+        <a href="#schoolsSection" class="sidebar-link" onclick="switchAdminSection('schoolsSection')">
+          <i class="fa-solid fa-school"></i>
+          <span>Partner Schools</span>
+        </a>
+        <a href="#inquiriesSection" class="sidebar-link" onclick="switchAdminSection('inquiriesSection')">
+          <i class="fa-solid fa-envelope-open-text"></i>
+          <span>Contact Inquiries</span>
+        </a>
+        <a href="#performanceSection" class="sidebar-link" onclick="switchAdminSection('performanceSection')">
           <i class="fa-solid fa-chart-line"></i>
-          <span>Subject Performance Grid</span>
+          <span>Exam Performance Grid</span>
         </a>
         <a href="/olympiads.html" class="sidebar-link" target="_blank">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          <span>Live Portals</span>
+          <span>Subject Catalog</span>
         </a>
         <a href="/exam.html" class="sidebar-link" target="_blank">
           <i class="fa-solid fa-stopwatch"></i>
@@ -52,27 +110,23 @@
         <span class="sidebar-nav-title" style="margin-top: 15px;">Data & Export</span>
         <a href="/api/admin/export-csv?type=full_ledger" class="sidebar-link">
           <i class="fa-solid fa-file-csv" style="color: #10b981;"></i>
-          <span>Export Full Ledger</span>
+          <span>Export Students (CSV)</span>
         </a>
-        <a href="/api/admin/export-csv?type=performance" class="sidebar-link">
+        <a href="/api/admin/export-csv-schools" class="sidebar-link">
           <i class="fa-solid fa-file-excel" style="color: #3b82f6;"></i>
-          <span>Export Score Matrix</span>
+          <span>Export Schools (CSV)</span>
+        </a>
+        <a href="/api/admin/export-csv-inquiries" class="sidebar-link">
+          <i class="fa-solid fa-file-lines" style="color: #f59e0b;"></i>
+          <span>Export Inquiries (CSV)</span>
         </a>
 
-        <span class="sidebar-nav-title" style="margin-top: 15px;">System</span>
-        <a href="/" class="sidebar-link">
+        <span class="sidebar-nav-title" style="margin-top: 15px;">System & Public</span>
+        <a href="/" class="sidebar-link" target="_blank">
           <i class="fa-solid fa-house"></i>
           <span>Public Website</span>
         </a>
-        <a href="/olympiads.html" class="sidebar-link">
-          <i class="fa-solid fa-book-open"></i>
-          <span>Subject Portal</span>
-        </a>
-        <a href="/exam.html" class="sidebar-link">
-          <i class="fa-solid fa-laptop-code" style="color: #f16032;"></i>
-          <span>Online Exam Room</span>
-        </a>
-        <a href="/register.html" class="sidebar-link">
+        <a href="/register.html" class="sidebar-link" target="_blank">
           <i class="fa-solid fa-user-plus"></i>
           <span>Registration Portal</span>
         </a>
@@ -86,6 +140,9 @@
             <div style="font-size: 0.75rem; color: #94a3b8;">admin@brainova.com</div>
           </div>
         </div>
+        <button type="button" class="btn-logout" id="btnAdminLogout">
+          <i class="fa-solid fa-power-off"></i> Logout
+        </button>
       </div>
     </aside>
 
@@ -95,15 +152,15 @@
       <header class="admin-topbar">
         <div class="admin-topbar-left">
           <h1>National Olympiad Master Control</h1>
-          <p>Multi-Tenant Institutional Ledger, Real-Time Question Delivery & Examination Score Matrix</p>
+          <p>Institutional Ledger, School Verification, Inquiries & Score Analytics</p>
         </div>
 
         <div class="admin-topbar-right">
-          <a href="/register.html?type=student" class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
+          <a href="/register.html?type=student" target="_blank" class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem;">
             <i class="fa-solid fa-user-plus"></i> Add Student
           </a>
-          <a href="/" class="btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">
-            <i class="fa-solid fa-globe"></i> Live Site
+          <a href="/register.html?type=school" target="_blank" class="btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">
+            <i class="fa-solid fa-school"></i> Add School
           </a>
         </div>
       </header>
@@ -113,7 +170,7 @@
 
         <!-- Global Metrics Cards -->
         <div class="metrics-row">
-          <div class="metric-card">
+          <div class="metric-card" onclick="switchAdminSection('ledgerSection')" style="cursor: pointer;">
             <div class="metric-info">
               <h6>Registered Students</h6>
               <div class="metric-value" id="metricTotalStudents">--</div>
@@ -124,18 +181,18 @@
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" onclick="switchAdminSection('schoolsSection')" style="cursor: pointer;">
             <div class="metric-info">
-              <h6>Partner Institutions</h6>
+              <h6>Partner Schools</h6>
               <div class="metric-value" id="metricTotalSchools">--</div>
-              <div class="metric-trend"><i class="fa-solid fa-school"></i> Verified Tenants</div>
+              <div class="metric-trend"><i class="fa-solid fa-school"></i> Verified Institutions</div>
             </div>
             <div class="metric-icon-bubble bubble-blue">
               <i class="fa-solid fa-building-columns"></i>
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" onclick="switchAdminSection('performanceSection')" style="cursor: pointer;">
             <div class="metric-info">
               <h6>Exams Completed</h6>
               <div class="metric-value" id="metricTotalExams">--</div>
@@ -146,19 +203,19 @@
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" onclick="switchAdminSection('inquiriesSection')" style="cursor: pointer;">
             <div class="metric-info">
-              <h6>National Avg Score</h6>
-              <div class="metric-value" id="metricAvgScore">--</div>
-              <div class="metric-trend" style="color: #8b5cf6;">Pass rate: <span id="metricPassRate">--</span></div>
+              <h6>Contact Messages</h6>
+              <div class="metric-value" id="metricTotalInquiries">--</div>
+              <div class="metric-trend" style="color: #f59e0b;"><i class="fa-solid fa-envelope"></i> Inquiries received</div>
             </div>
             <div class="metric-icon-bubble bubble-purple">
-              <i class="fa-solid fa-chart-pie"></i>
+              <i class="fa-solid fa-comments"></i>
             </div>
           </div>
         </div>
 
-        <!-- 1. Central Interactive Registration Ledger (Step 3) -->
+        <!-- 1. Central Student Registration Ledger -->
         <div class="admin-card" id="ledgerSection">
           <div class="admin-card-header">
             <div class="admin-card-title">
@@ -168,28 +225,23 @@
             </div>
 
             <div style="display: flex; gap: 10px;">
-              <button type="button" class="btn-export-csv" id="btnExportLedgerCSV">
-                <i class="fa-solid fa-file-csv"></i> Export Ledger to CSV
-              </button>
+              <a href="/api/admin/export-csv?type=full_ledger" class="btn-export-csv">
+                <i class="fa-solid fa-file-csv"></i> Export Students to CSV
+              </a>
             </div>
           </div>
 
-          <!-- Unified Controls Toolbar -->
           <div class="unified-controls-bar">
-            <!-- Search bar: Email, Name, Roll No, School -->
             <div class="control-search-box">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input type="text" id="searchLedgerInput" class="control-search-input" placeholder="Search by Student Name, Email, Roll No, or School...">
             </div>
 
-            <!-- Filters -->
             <div class="control-filters-group">
-              <!-- Tenant / School Filter -->
               <select id="filterTenantSchool" class="select-filter">
                 <option value="all">All Schools (Tenants)</option>
               </select>
 
-              <!-- Custom Date Wrapper -->
               <select id="filterDateRange" class="select-filter">
                 <option value="all">Date: All Time</option>
                 <option value="today">Registered: Today</option>
@@ -197,7 +249,6 @@
                 <option value="30days">Last 30 Days</option>
               </select>
 
-              <!-- Account Status Filter -->
               <select id="filterStatus" class="select-filter">
                 <option value="all">Status: All</option>
                 <option value="active">Active</option>
@@ -207,7 +258,6 @@
             </div>
           </div>
 
-          <!-- Interactive Ledger Table -->
           <div class="admin-table-wrapper">
             <table class="admin-table">
               <thead>
@@ -216,8 +266,8 @@
                   <th>Candidate Name & Contact</th>
                   <th>Grade</th>
                   <th>Assigned Tenant / School</th>
-                  <th>Login & Timestamps</th>
-                  <th>Account Status</th>
+                  <th>Registered At</th>
+                  <th>Status</th>
                   <th>Exams</th>
                   <th>Actions</th>
                 </tr>
@@ -229,23 +279,119 @@
           </div>
         </div>
 
-        <!-- 2. Subject Grid Performance (Step 3: Multi-tenant score tracker across English, GK, Maths) -->
-        <div class="admin-card" id="performanceSection">
+        <!-- 2. Partner Schools Directory -->
+        <div class="admin-card" id="schoolsSection" style="display: none;">
           <div class="admin-card-header">
             <div class="admin-card-title">
-              <i class="fa-solid fa-grid-2" style="color: #3b82f6; font-size: 1.2rem;"></i>
-              <h3>Subject Grid Performance Tracker</h3>
-              <span class="badge-count" style="background: #3b82f6;" id="perfCountBadge">0 Candidates</span>
+              <i class="fa-solid fa-building-columns" style="color: #3b82f6; font-size: 1.2rem;"></i>
+              <h3>Partner Schools & Institutions</h3>
+              <span class="badge-count" style="background: #3b82f6;" id="schoolsCountBadge">0 Schools</span>
             </div>
 
             <div style="display: flex; gap: 10px;">
-              <button type="button" class="btn-export-csv" id="btnExportPerfCSV" style="background: #3b82f6;">
-                <i class="fa-solid fa-file-arrow-down"></i> Export Performance Matrix (CSV)
-              </button>
+              <a href="/api/admin/export-csv-schools" class="btn-export-csv" style="background: #3b82f6;">
+                <i class="fa-solid fa-file-excel"></i> Export Schools to CSV
+              </a>
             </div>
           </div>
 
-          <!-- Controls for Performance Grid -->
+          <div class="unified-controls-bar">
+            <div class="control-search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="searchSchoolsInput" class="control-search-input" placeholder="Search by School Name, Code, City, or Contact Person...">
+            </div>
+
+            <div class="control-filters-group">
+              <select id="filterSchoolBoard" class="select-filter">
+                <option value="all">Board: All</option>
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="State Board">State Board</option>
+                <option value="IB">IB</option>
+                <option value="IGCSE">IGCSE</option>
+              </select>
+
+              <select id="filterSchoolStatus" class="select-filter">
+                <option value="all">Status: All</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>School Code</th>
+                  <th>School Name & Affiliation</th>
+                  <th>Principal / Contact Person</th>
+                  <th>Email & Phone</th>
+                  <th>Location</th>
+                  <th>Students Enrolled</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="schoolsTableBody">
+                <!-- Dynamically loaded schools -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3. Contact Inquiries & Quick Quotes -->
+        <div class="admin-card" id="inquiriesSection" style="display: none;">
+          <div class="admin-card-header">
+            <div class="admin-card-title">
+              <i class="fa-solid fa-comments" style="color: #f59e0b; font-size: 1.2rem;"></i>
+              <h3>Contact Inquiries & Quote Requests</h3>
+              <span class="badge-count" style="background: #f59e0b;" id="inquiriesCountBadge">0 Messages</span>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <a href="/api/admin/export-csv-inquiries" class="btn-export-csv" style="background: #f59e0b;">
+                <i class="fa-solid fa-file-lines"></i> Export Inquiries to CSV
+              </a>
+            </div>
+          </div>
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Sender Name</th>
+                  <th>Contact Info</th>
+                  <th>Message / Query</th>
+                  <th>Received Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inquiriesTableBody">
+                <!-- Dynamically loaded inquiries -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Subject Grid Performance -->
+        <div class="admin-card" id="performanceSection" style="display: none;">
+          <div class="admin-card-header">
+            <div class="admin-card-title">
+              <i class="fa-solid fa-chart-pie" style="color: #10b981; font-size: 1.2rem;"></i>
+              <h3>Subject Grid Performance Tracker</h3>
+              <span class="badge-count" style="background: #10b981;" id="perfCountBadge">0 Graded</span>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <a href="/api/admin/export-csv?type=performance" class="btn-export-csv" style="background: #10b981;">
+                <i class="fa-solid fa-file-excel"></i> Export Performance to CSV
+              </a>
+            </div>
+          </div>
+
           <div class="unified-controls-bar">
             <div class="control-search-box">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -259,7 +405,6 @@
             </div>
           </div>
 
-          <!-- Performance Table -->
           <div class="admin-table-wrapper">
             <table class="admin-table">
               <thead>

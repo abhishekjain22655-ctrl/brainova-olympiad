@@ -37,21 +37,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+const multer = require('multer');
+const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } });
+
 // Form POST endpoints matching original site form actions
-app.post('/student-registration-submit.html', async (req, res) => {
+app.post('/student-registration-submit.html', upload.any(), async (req, res) => {
   try {
     const {
       student_name, dob, student_email, student_phone, parent_name,
       student_school_id, student_school, student_class, address, city, district, state, pincode
     } = req.body;
     
-    // Redirect to auth API or process directly
-    const authRoutes = require('./routes/authRoutes');
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
 
     const countRow = await db.get('SELECT COUNT(*) as count FROM students');
-    const rollNumber = `BNO-2026-${String(countRow.count + 1).padStart(4, '0')}`;
+    const rollNumber = `BNO-2026-${String((countRow?.count || 0) + 1).padStart(4, '0')}`;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('Brainova@2026', salt);
 
@@ -61,11 +62,21 @@ app.post('/student-registration-submit.html', async (req, res) => {
         school_id, grade_class, parent_name, address, city, state, pincode, status, last_login
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', datetime('now'))
     `, [
-      rollNumber, student_name || 'Registered Student', (student_email || '').toLowerCase() || `${rollNumber}@brainova.com`,
+      rollNumber, student_name || 'Registered Student', (student_email || '').toLowerCase() || `${rollNumber.toLowerCase()}@brainova.com`,
       hash, student_phone || '9999999999', dob || null,
       parseInt(student_school_id) || 1, student_class || 'Class 10',
       parent_name || '', address || '', city || '', state || '', pincode || ''
     ]);
+
+    // If client requested JSON (e.g. jQuery AJAX in front.js)
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({
+        success: true,
+        message: 'Registration Successful!',
+        rollNumber: rollNumber,
+        link: '/admin'
+      });
+    }
 
     res.send(`
       <!DOCTYPE html>
@@ -92,20 +103,27 @@ app.post('/student-registration-submit.html', async (req, res) => {
     `);
   } catch (err) {
     console.error('Student registration error:', err);
+    if (req.xhr || req.headers.accept?.includes('json')) {
+      return res.status(500).json({ success: false, message: 'Registration processing failed.' });
+    }
     res.status(500).send('Registration processing failed.');
   }
 });
 
-app.post('/school-registration-submit.html', async (req, res) => {
+app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
   try {
-    const { school_name, affiliation_board, contact_name, contact_email, contact_phone_number, city, state, pincode } = req.body;
+    const { school_name, affiliation_board, board, contact_name, contact_email, email, contact_phone_number, phone_number, city, state, pincode } = req.body;
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
 
     const countRow = await db.get('SELECT COUNT(*) as count FROM schools');
-    const schoolCode = `SCH-${String(countRow.count + 101)}`;
+    const schoolCode = `SCH-${String((countRow?.count || 0) + 101)}`;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('School@2026', salt);
+
+    const sEmail = (contact_email || email || '').toLowerCase() || `${schoolCode.toLowerCase()}@school.edu`;
+    const sPhone = contact_phone_number || phone_number || '8587929298';
+    const sBoard = affiliation_board || board || 'CBSE';
 
     await db.run(`
       INSERT INTO schools (
@@ -113,10 +131,19 @@ app.post('/school-registration-submit.html', async (req, res) => {
         contact_email, contact_phone, password_hash, city, district, state, pincode, status
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
     `, [
-      schoolCode, school_name || 'Partner School', affiliation_board || 'CBSE',
-      contact_name || 'Principal', (contact_email || '').toLowerCase() || `${schoolCode}@school.edu`,
-      contact_phone_number || '8587929298', hash, city || '', '', state || '', pincode || ''
+      schoolCode, school_name || 'Partner School', sBoard,
+      contact_name || 'Principal', sEmail,
+      sPhone, hash, city || '', '', state || '', pincode || ''
     ]);
+
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({
+        success: true,
+        message: 'School Registered Successfully!',
+        schoolCode: schoolCode,
+        link: '/admin'
+      });
+    }
 
     res.send(`
       <!DOCTYPE html>
@@ -138,6 +165,10 @@ app.post('/school-registration-submit.html', async (req, res) => {
       </html>
     `);
   } catch (err) {
+    console.error('School registration error:', err);
+    if (req.xhr || req.headers.accept?.includes('json')) {
+      return res.status(500).json({ success: false, message: 'School registration failed.' });
+    }
     res.status(500).send('School registration failed.');
   }
 });
@@ -166,15 +197,31 @@ app.post('/school/search-school.html', async (req, res) => {
   }
 });
 
-app.post('/contact-submit.html', async (req, res) => {
+app.post('/contact-submit.html', upload.any(), async (req, res) => {
   try {
-    const { name, phone_number, email, message } = req.body;
+    const { name, first_name, last_name, phone_number, phone, email, message } = req.body;
     const db = require('./db/database');
+    const senderName = name || (first_name ? `${first_name} ${last_name || ''}`.trim() : 'Anonymous Inquirer');
+    const senderPhone = phone_number || phone || '';
+    const senderEmail = email || '';
+    const senderMsg = message || '';
+
     await db.run('INSERT INTO contact_inquiries (full_name, phone_number, email, message) VALUES (?, ?, ?, ?)', [
-      name || 'Anonymous', phone_number || '', email || '', message || ''
+      senderName, senderPhone, senderEmail, senderMsg
     ]);
+
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({
+        success: true,
+        message: 'Your inquiry has been received. Our team will contact you shortly.'
+      });
+    }
+
     res.send(`<script>alert('Thank you! Your inquiry has been received. Our team will contact you shortly.'); window.location.href='/';</script>`);
   } catch (err) {
+    if (req.xhr || req.headers.accept?.includes('json')) {
+      return res.status(500).json({ success: false, message: 'Failed to record inquiry.' });
+    }
     res.redirect('/');
   }
 });
@@ -293,9 +340,76 @@ app.get(['/teachers.html', '/teachers'], (req, res) => res.redirect('/about-us.h
 app.post('/blog/comment/store', (req, res) => {
   res.send('<script>alert("Thank you! Your comment has been submitted successfully."); history.back();</script>');
 });
-app.get('/faqs.html', (req, res) => res.redirect('/about-us.html'));
-app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
-app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.post('/contact-submit.html', upload.any(), async (req, res) => {
+  try {
+    const { name, full_name, email, phone, phone_number, message } = req.body;
+    const db = require('./db/database');
+    const senderName = name || full_name || 'Visitor';
+    const senderEmail = (email || '').toLowerCase() || 'visitor@example.com';
+    const senderPhone = phone || phone_number || '';
+    const msg = message || 'Inquiry submitted from website';
+
+    await db.run(`
+      INSERT INTO contact_inquiries (full_name, phone_number, email, message, status)
+      VALUES (?, ?, ?, ?, 'new')
+    `, [senderName, senderPhone, senderEmail, msg]);
+
+    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({
+        success: true,
+        message: 'Your inquiry has been submitted successfully! Our team will contact you shortly.'
+      });
+    }
+
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>Inquiry Received</title><link rel="stylesheet" href="/public/assets/css/vendor/bootstrap.min.css"></head>
+      <body style="background:#19124d; color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:sans-serif; text-align:center;">
+        <div style="background:#ffffff; color:#19124d; padding:40px; border-radius:16px; max-width:500px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">Inquiry Received!</h2>
+          <p style="color:#64748b;">Thank you <strong>${senderName}</strong>. Our team will get back to you shortly.</p>
+          <a href="/" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Contact submission error:', err);
+    res.status(500).json({ success: false, message: 'Failed to submit inquiry.' });
+  }
+});
+
+// Admin Protection Middleware
+function checkAdminAuth(req, res, next) {
+  const jwt = require('jsonwebtoken');
+  const JWT_SECRET = process.env.JWT_SECRET || 'brainova_master_jwt_secret_2026';
+  
+  let token = null;
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/brainova_admin_token=([^;]+)/);
+    if (match) token = match[1];
+  }
+  if (!token && req.headers['authorization']) {
+    token = req.headers['authorization'].replace('Bearer ', '');
+  }
+
+  if (!token) {
+    return res.redirect('/admin-login.html');
+  }
+
+  try {
+    req.admin = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch (err) {
+    return res.redirect('/admin-login.html');
+  }
+}
+
+app.get('/admin-login.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin-login.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 // Catch-all fallback
 app.use((req, res) => {

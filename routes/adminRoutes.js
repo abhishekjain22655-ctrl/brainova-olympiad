@@ -309,4 +309,192 @@ router.post('/student/:id/status', async (req, res) => {
   }
 });
 
+// ==========================================================
+// 6. Admin Authentication & Session Management
+// ==========================================================
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'brainova_master_jwt_secret_2026';
+const ADMIN_USER = process.env.ADMIN_USER || 'admin@brainova.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Admin@Brainova2026';
+
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Username and password required.' });
+  }
+
+  const validUser = (username.trim().toLowerCase() === ADMIN_USER.toLowerCase() || username.trim().toLowerCase() === 'admin');
+  const validPass = (password === ADMIN_PASSWORD);
+
+  if (!validUser || !validPass) {
+    return res.status(401).json({ success: false, message: 'Invalid administrator credentials.' });
+  }
+
+  const token = jwt.sign({ role: 'admin', user: 'Super Admin', email: ADMIN_USER }, JWT_SECRET, { expiresIn: '7d' });
+  res.cookie('brainova_admin_token', token, {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    sameSite: 'lax',
+    path: '/'
+  });
+
+  res.json({ success: true, redirect: '/admin', token });
+});
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('brainova_admin_token', { path: '/' });
+  res.json({ success: true, redirect: '/admin-login.html' });
+});
+
+router.get('/session', (req, res) => {
+  let token = null;
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/brainova_admin_token=([^;]+)/);
+    if (match) token = match[1];
+  }
+  if (!token && req.headers['authorization']) {
+    token = req.headers['authorization'].replace('Bearer ', '');
+  }
+
+  if (!token) {
+    return res.json({ authenticated: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    res.json({ authenticated: true, user: decoded });
+  } catch (err) {
+    res.json({ authenticated: false });
+  }
+});
+
+// ==========================================================
+// 7. School / Tenant Management Endpoints
+// ==========================================================
+router.get('/schools', async (req, res) => {
+  try {
+    const { q, board, status } = req.query;
+    let sql = `
+      SELECT 
+        s.*,
+        COUNT(st.id) as student_count
+      FROM schools s
+      LEFT JOIN students st ON s.id = st.school_id
+      WHERE 1=1
+    `;
+    const params = [];
+    if (q && q.trim()) {
+      sql += ` AND (s.school_name LIKE ? OR s.school_code LIKE ? OR s.contact_person LIKE ? OR s.city LIKE ?)`;
+      const term = `%${q.trim()}%`;
+      params.push(term, term, term, term);
+    }
+    if (board && board !== 'all') {
+      sql += ` AND s.affiliation_board = ?`;
+      params.push(board);
+    }
+    if (status && status !== 'all') {
+      sql += ` AND s.status = ?`;
+      params.push(status);
+    }
+    sql += ` GROUP BY s.id ORDER BY s.id DESC`;
+    const schools = await all(sql, params);
+    res.json({ success: true, data: schools });
+  } catch (err) {
+    console.error('Fetch schools error:', err);
+    res.status(500).json({ success: false, message: 'Failed to retrieve schools.' });
+  }
+});
+
+router.post('/school/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    await run('UPDATE schools SET status = ? WHERE id = ?', [status, id]);
+    res.json({ success: true, message: `School status updated to ${status}.` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to update school.' });
+  }
+});
+
+// ==========================================================
+// 8. Contact Inquiries & Quick Quotes
+// ==========================================================
+router.get('/inquiries', async (req, res) => {
+  try {
+    const inquiries = await all('SELECT * FROM contact_inquiries ORDER BY id DESC');
+    res.json({ success: true, data: inquiries });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to load inquiries.' });
+  }
+});
+
+router.post('/inquiry/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    await run('UPDATE contact_inquiries SET status = ? WHERE id = ?', [status, id]);
+    res.json({ success: true, message: 'Inquiry status updated.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to update inquiry.' });
+  }
+});
+
+router.delete('/inquiry/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await run('DELETE FROM contact_inquiries WHERE id = ?', [id]);
+    res.json({ success: true, message: 'Inquiry deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to delete inquiry.' });
+  }
+});
+
+// ==========================================================
+// 9. Export Schools / Inquiries to CSV
+// ==========================================================
+router.get('/export-csv-schools', async (req, res) => {
+  try {
+    const schools = await all(`
+      SELECT s.*, COUNT(st.id) as student_count 
+      FROM schools s 
+      LEFT JOIN students st ON s.id = st.school_id 
+      GROUP BY s.id 
+      ORDER BY s.id DESC
+    `);
+    const csvData = [
+      ['School Code', 'School Name', 'Board', 'Contact Person', 'Email', 'Phone', 'City', 'State', 'Pincode', 'Enrolled Students', 'Status', 'Registered Date']
+    ];
+    for (const s of schools) {
+      csvData.push([
+        s.school_code, s.school_name, s.affiliation_board, s.contact_person, s.contact_email, s.contact_phone,
+        s.city, s.state, s.pincode, s.student_count || 0, s.status.toUpperCase(), s.created_at
+      ]);
+    }
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="brainova_partner_schools_2026.csv"');
+    stringify(csvData).pipe(res);
+  } catch (err) {
+    res.status(500).send('Error exporting schools.');
+  }
+});
+
+router.get('/export-csv-inquiries', async (req, res) => {
+  try {
+    const inquiries = await all('SELECT * FROM contact_inquiries ORDER BY id DESC');
+    const csvData = [
+      ['ID', 'Sender Name', 'Phone', 'Email', 'Message / Query', 'Status', 'Date Received']
+    ];
+    for (const inq of inquiries) {
+      csvData.push([
+        inq.id, inq.full_name, inq.phone_number, inq.email, inq.message, inq.status.toUpperCase(), inq.created_at
+      ]);
+    }
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="brainova_contact_inquiries_2026.csv"');
+    stringify(csvData).pipe(res);
+  } catch (err) {
+    res.status(500).send('Error exporting inquiries.');
+  }
+});
+
 module.exports = router;

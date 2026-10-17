@@ -15,6 +15,8 @@ async function initAdminDashboard() {
   loadMetrics();
   loadSchoolsDropdown();
   loadRegistrationLedger();
+  loadSchoolsDirectory();
+  loadInquiries();
   loadSubjectPerformanceGrid();
   setupEventListeners();
 }
@@ -257,23 +259,257 @@ function setupEventListeners() {
   }
   document.getElementById('filterPerfSchool')?.addEventListener('change', loadSubjectPerformanceGrid);
 
-  // CSV Export Button
-  const btnExport = document.getElementById('btnExportLedgerCSV');
-  if (btnExport) {
-    btnExport.addEventListener('click', () => {
-      const schoolVal = document.getElementById('filterTenantSchool')?.value || 'all';
-      const dateVal = document.getElementById('filterDateRange')?.value || 'all';
-      window.location.href = `/api/admin/export-csv?type=full_ledger&school_id=${schoolVal}&date_range=${dateVal}`;
-    });
-  }
+  // CSV Export Buttons
+  document.getElementById('btnExportLedgerCSV')?.addEventListener('click', () => {
+    const schoolVal = document.getElementById('filterTenantSchool')?.value || 'all';
+    const dateVal = document.getElementById('filterDateRange')?.value || 'all';
+    window.location.href = `/api/admin/export-csv?type=full_ledger&school_id=${schoolVal}&date_range=${dateVal}`;
+  });
 
-  const btnExportPerf = document.getElementById('btnExportPerfCSV');
-  if (btnExportPerf) {
-    btnExportPerf.addEventListener('click', () => {
-      window.location.href = `/api/admin/export-csv?type=performance`;
-    });
+  document.getElementById('btnExportPerfCSV')?.addEventListener('click', () => {
+    window.location.href = `/api/admin/export-csv?type=performance`;
+  });
+
+  // Schools directory search & filters
+  let schoolSearchTimer;
+  document.getElementById('searchSchoolsInput')?.addEventListener('input', () => {
+    clearTimeout(schoolSearchTimer);
+    schoolSearchTimer = setTimeout(loadSchoolsDirectory, 300);
+  });
+  document.getElementById('filterSchoolBoard')?.addEventListener('change', loadSchoolsDirectory);
+  document.getElementById('filterSchoolStatus')?.addEventListener('change', loadSchoolsDirectory);
+
+  // Admin Logout button
+  document.getElementById('btnAdminLogout')?.addEventListener('click', async () => {
+    if (confirm('Are you sure you want to sign out of the Master Control Admin Panel?')) {
+      try {
+        const res = await fetch('/api/admin/logout', { method: 'POST' });
+        const json = await res.json();
+        window.location.href = json.redirect || '/admin-login.html';
+      } catch (e) {
+        window.location.href = '/admin-login.html';
+      }
+    }
+  });
+}
+
+// ==========================================================
+// 6. Section / Tab Switching
+// ==========================================================
+function switchAdminSection(sectionId) {
+  const sections = ['ledgerSection', 'schoolsSection', 'inquiriesSection', 'performanceSection'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
+  });
+
+  // Update sidebar active state
+  document.querySelectorAll('.sidebar-nav .sidebar-link').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === '#' + sectionId) {
+      link.classList.add('active');
+    } else if (href && href.startsWith('#')) {
+      link.classList.remove('active');
+    }
+  });
+
+  // Refresh data for the active section
+  if (sectionId === 'schoolsSection') loadSchoolsDirectory();
+  if (sectionId === 'inquiriesSection') loadInquiries();
+  if (sectionId === 'ledgerSection') loadRegistrationLedger();
+  if (sectionId === 'performanceSection') loadSubjectPerformanceGrid();
+}
+window.switchAdminSection = switchAdminSection;
+
+// ==========================================================
+// 7. Schools Directory Handling
+// ==========================================================
+let currentSchoolsData = [];
+
+async function loadSchoolsDirectory() {
+  const tbody = document.getElementById('schoolsTableBody');
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Loading Schools Directory...</td></tr>`;
+
+  const q = document.getElementById('searchSchoolsInput')?.value || '';
+  const board = document.getElementById('filterSchoolBoard')?.value || 'all';
+  const status = document.getElementById('filterSchoolStatus')?.value || 'all';
+
+  const params = new URLSearchParams({ q, board, status });
+
+  try {
+    const res = await fetch(`/api/admin/schools?${params.toString()}`);
+    const json = await res.json();
+    if (json.success) {
+      currentSchoolsData = json.data;
+      renderSchools(currentSchoolsData);
+      const countBadge = document.getElementById('schoolsCountBadge');
+      if (countBadge) countBadge.textContent = `${currentSchoolsData.length} Schools`;
+    }
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: red;">Failed to load schools directory.</td></tr>`;
   }
 }
+window.loadSchoolsDirectory = loadSchoolsDirectory;
+
+function renderSchools(schools) {
+  const tbody = document.getElementById('schoolsTableBody');
+  if (!tbody) return;
+
+  if (schools.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 40px; color: #64748b;">No partner institutions found matching criteria.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = schools.map(s => {
+    const statusClass = s.status === 'active' ? 'status-active' : 'status-pending';
+    return `
+      <tr>
+        <td><span class="student-code-pill" style="background: rgba(59, 130, 246, 0.12); color: #2563eb;">${s.school_code}</span></td>
+        <td>
+          <div style="font-weight: 700; color: #1e1b4b;">${escapeHtml(s.school_name)}</div>
+          <small style="color: #64748b;">Board: <strong>${escapeHtml(s.affiliation_board || 'CBSE')}</strong></small>
+        </td>
+        <td>
+          <div style="font-weight: 600; color: #334155;">${escapeHtml(s.contact_person || 'N/A')}</div>
+        </td>
+        <td>
+          <div style="font-size: 0.82rem;">${escapeHtml(s.contact_email || '—')}</div>
+          <small style="color: #64748b;">${escapeHtml(s.contact_phone || '—')}</small>
+        </td>
+        <td>
+          <span style="font-size: 0.85rem;">${escapeHtml(s.city || '')}, ${escapeHtml(s.state || '')}</span>
+        </td>
+        <td>
+          <span style="font-weight: 700; color: #1e1b4b; font-size: 1rem;">${s.student_count || 0}</span>
+        </td>
+        <td>
+          <span class="status-badge ${statusClass}">${s.status}</span>
+        </td>
+        <td>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-action-icon" title="Toggle Active/Pending Status" onclick="toggleSchoolStatus(${s.id}, '${s.status}')">
+              <i class="fas ${s.status === 'active' ? 'fa-ban' : 'fa-check'}"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function toggleSchoolStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'active' ? 'pending' : 'active';
+  try {
+    const res = await fetch(`/api/admin/school/${id}/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    const json = await res.json();
+    if (json.success) {
+      loadSchoolsDirectory();
+      loadSchoolsDropdown();
+    }
+  } catch (err) {
+    alert('Failed to update school status.');
+  }
+}
+window.toggleSchoolStatus = toggleSchoolStatus;
+
+// ==========================================================
+// 8. Contact Inquiries & Quotes Handling
+// ==========================================================
+async function loadInquiries() {
+  const tbody = document.getElementById('inquiriesTableBody');
+  if (!tbody) return;
+
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 30px;"><i class="fas fa-spinner fa-spin"></i> Loading Contact Messages...</td></tr>`;
+
+  try {
+    const res = await fetch('/api/admin/inquiries');
+    const json = await res.json();
+    if (json.success) {
+      renderInquiries(json.data);
+      const countBadge = document.getElementById('inquiriesCountBadge');
+      if (countBadge) countBadge.textContent = `${json.data.length} Messages`;
+    }
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Failed to load inquiries.</td></tr>`;
+  }
+}
+window.loadInquiries = loadInquiries;
+
+function renderInquiries(inquiries) {
+  const tbody = document.getElementById('inquiriesTableBody');
+  if (!tbody) return;
+
+  if (inquiries.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">No contact inquiries or messages received yet.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = inquiries.map(inq => {
+    const statusClass = inq.status === 'new' ? 'status-new' : inq.status === 'reviewed' ? 'status-reviewed' : 'status-pending';
+    const dateStr = inq.created_at ? new Date(inq.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : '—';
+    return `
+      <tr>
+        <td><strong>#${inq.id}</strong></td>
+        <td>
+          <div style="font-weight: 700; color: #1e1b4b;">${escapeHtml(inq.full_name)}</div>
+        </td>
+        <td>
+          <div style="font-size: 0.85rem;"><i class="fas fa-envelope" style="color: #64748b; font-size: 0.75rem;"></i> ${escapeHtml(inq.email)}</div>
+          <div style="font-size: 0.85rem;"><i class="fas fa-phone" style="color: #64748b; font-size: 0.75rem;"></i> ${escapeHtml(inq.phone_number || 'N/A')}</div>
+        </td>
+        <td>
+          <div style="max-width: 320px; font-size: 0.88rem; color: #334155; line-height: 1.4;">${escapeHtml(inq.message)}</div>
+        </td>
+        <td><small style="color: #64748b;">${dateStr}</small></td>
+        <td><span class="status-badge ${statusClass}">${inq.status}</span></td>
+        <td>
+          <div style="display: flex; gap: 6px;">
+            <button class="btn-action-icon" title="Toggle Reviewed / New" onclick="toggleInquiryStatus(${inq.id}, '${inq.status}')">
+              <i class="fas ${inq.status === 'new' ? 'fa-check-double' : 'fa-clock'}"></i>
+            </button>
+            <button class="btn-action-icon" title="Delete Inquiry" style="color: #ef4444;" onclick="deleteInquiry(${inq.id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function toggleInquiryStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'new' ? 'reviewed' : 'new';
+  try {
+    const res = await fetch(`/api/admin/inquiry/${id}/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    const json = await res.json();
+    if (json.success) loadInquiries();
+  } catch (err) {
+    alert('Failed to update inquiry status.');
+  }
+}
+window.toggleInquiryStatus = toggleInquiryStatus;
+
+async function deleteInquiry(id) {
+  if (!confirm('Are you sure you want to delete this message?')) return;
+  try {
+    const res = await fetch(`/api/admin/inquiry/${id}`, { method: 'DELETE' });
+    const json = await res.json();
+    if (json.success) loadInquiries();
+  } catch (err) {
+    alert('Failed to delete inquiry.');
+  }
+}
+window.deleteInquiry = deleteInquiry;
 
 // Toggle student status
 async function toggleStudentStatus(id, currentStatus) {
