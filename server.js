@@ -99,39 +99,19 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
       console.error('Email dispatch trigger error:', e);
     }
 
+    const successUrl = `/registration-success.html?type=student&roll=${encodeURIComponent(rollNumber)}&name=${encodeURIComponent(student_name || 'Candidate')}&class=${encodeURIComponent(student_class || 'Class 10')}`;
+
     // If client requested JSON (e.g. jQuery AJAX in front.js)
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
         success: true,
         message: 'Registration Successful! Your Roll Number is ' + rollNumber,
         rollNumber: rollNumber,
-        link: '/login.html?registered=student&roll=' + rollNumber
+        link: successUrl
       });
     }
 
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Registration Complete</title>
-        <link rel="stylesheet" href="/public/assets/css/vendor/bootstrap.min.css">
-        <link rel="stylesheet" href="/public/assets/css/app.css">
-      </head>
-      <body style="background:#19124d; color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:sans-serif; text-align:center;">
-        <div style="background:#ffffff; color:#19124d; padding:40px; border-radius:16px; max-width:500px; box-shadow:0 15px 35px rgba(0,0,0,0.3);">
-          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">Registration Successful!</h2>
-          <p style="color:#64748b;">Welcome <strong>${student_name || 'Candidate'}</strong> to Brainova National Olympiad 2026.</p>
-          <div style="background:#f1f5f9; padding:15px; border-radius:10px; font-size:22px; font-weight:bold; color:#f16032; margin:20px 0;">
-            Roll Number: ${rollNumber}
-          </div>
-          <div style="display:flex; gap:10px; justify-content:center;">
-            <a href="/login.html?registered=student&roll=${rollNumber}" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Proceed to Login</a>
-            <a href="/" class="btn" style="background:#f16032; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
+    return res.redirect(successUrl);
   } catch (err) {
     console.error('Student registration error:', err);
     if (req.xhr || req.headers.accept?.includes('json')) {
@@ -199,37 +179,18 @@ app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
       console.error('School email dispatch trigger error:', e);
     }
 
+    const successUrl = `/registration-success.html?type=school&code=${encodeURIComponent(schoolCode)}&name=${encodeURIComponent(school_name || 'Partner School')}`;
+
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
         success: true,
         message: 'School Registered Successfully! Your School Code is ' + schoolCode,
         schoolCode: schoolCode,
-        link: '/login.html?registered=school&code=' + schoolCode
+        link: successUrl
       });
     }
 
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>School Registered</title>
-        <link rel="stylesheet" href="/public/assets/css/vendor/bootstrap.min.css">
-      </head>
-      <body style="background:#19124d; color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:sans-serif; text-align:center;">
-        <div style="background:#ffffff; color:#19124d; padding:40px; border-radius:16px; max-width:500px; box-shadow:0 15px 35px rgba(0,0,0,0.3);">
-          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">School Registered Successfully!</h2>
-          <p style="color:#64748b;"><strong>${school_name || 'School'}</strong> has been registered as an examination tenant center.</p>
-          <div style="background:#f1f5f9; padding:15px; border-radius:10px; font-size:22px; font-weight:bold; color:#f16032; margin:20px 0;">
-            School Code: ${schoolCode}
-          </div>
-          <div style="display:flex; gap:10px; justify-content:center;">
-            <a href="/login.html?registered=school&code=${schoolCode}" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Proceed to School Login</a>
-            <a href="/" class="btn" style="background:#f16032; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
-          </div>
-        </div>
-      </body>
-      </html>
-    `);
+    return res.redirect(successUrl);
   } catch (err) {
     console.error('School registration error:', err);
     if (req.xhr || req.headers.accept?.includes('json')) {

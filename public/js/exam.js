@@ -41,14 +41,34 @@ async function loadExamSession(subjectSlug) {
     document.getElementById('examSubjectTitle').textContent = json.subject.title;
     document.getElementById('examTotalQCount').textContent = json.questions.length;
 
-    // Check logged in user or guest
-    const userJson = localStorage.getItem('brainova_user');
-    if (userJson) {
+    // Check candidate Roll Number from URL or Storage (No login required)
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeRoll = urlParams.get('roll') || localStorage.getItem('brainova_roll');
+
+    if (activeRoll) {
+      document.getElementById('examCandidateRoll').textContent = activeRoll;
+      localStorage.setItem('brainova_roll', activeRoll);
       try {
-        const u = JSON.parse(userJson);
-        document.getElementById('examCandidateName').textContent = u.name || 'Candidate';
-        document.getElementById('examCandidateRoll').textContent = u.roll_number || 'BNO-GUEST';
-      } catch (e) {}
+        const cRes = await fetch(`/api/exams/candidate/${encodeURIComponent(activeRoll)}`);
+        const cJson = await cRes.json();
+        if (cJson.success && cJson.candidate) {
+          examData.candidate = cJson.candidate;
+          document.getElementById('examCandidateName').textContent = cJson.candidate.name;
+          document.getElementById('examCandidateRoll').textContent = cJson.candidate.roll_number;
+        }
+      } catch (e) {
+        console.warn('Could not resolve candidate by roll number:', e);
+      }
+    } else {
+      const userJson = localStorage.getItem('brainova_user');
+      if (userJson) {
+        try {
+          const u = JSON.parse(userJson);
+          examData.candidate = u;
+          document.getElementById('examCandidateName').textContent = u.name || 'Candidate';
+          document.getElementById('examCandidateRoll').textContent = u.roll_number || 'BNO-GUEST';
+        } catch (e) {}
+      }
     }
 
     buildQuestionPalette();
@@ -274,15 +294,15 @@ async function submitExam() {
 
   const timeTaken = examData.totalSeconds - examData.remainingSeconds;
 
-  let userJson = localStorage.getItem('brainova_user');
-  let studentId = 1;
-  let rollNumber = 'BNO-2026-001';
+  let studentId = examData.candidate?.id || 1;
+  let rollNumber = examData.candidate?.roll_number || localStorage.getItem('brainova_roll') || 'BNO-2026-GUEST';
 
-  if (userJson) {
+  const userJson = localStorage.getItem('brainova_user');
+  if (userJson && !examData.candidate) {
     try {
       const u = JSON.parse(userJson);
-      studentId = u.id || 1;
-      rollNumber = u.roll_number || 'BNO-2026-001';
+      studentId = u.id || studentId;
+      rollNumber = u.roll_number || rollNumber;
     } catch (e) {}
   }
 

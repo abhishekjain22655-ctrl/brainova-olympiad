@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Confirmed | Brainova National Olympiad 2026</title>
+  <link rel="shortcut icon" type="image/png" href="/public/assets/media/logo.png">
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #19124d;
+      --accent: #f16032;
+      --accent-hover: #d94e22;
+      --success: #10b981;
+      --surface: #ffffff;
+      --bg: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-bar {
+      background: var(--primary);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-bar img {
+      height: 38px;
+    }
+
+    .header-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-left: 20px;
+      transition: color 0.2s;
+    }
+
+    .header-links a:hover {
+      color: #ffffff;
+    }
+
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .slip-container {
+      background: var(--surface);
+      max-width: 680px;
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      animation: popIn 0.4s ease-out;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slip-header {
+      background: linear-gradient(135deg, #100b2e, #1e1654);
+      color: #ffffff;
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+    }
+
+    .check-icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.2);
+      border: 2px solid var(--success);
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 16px auto;
+    }
+
+    .slip-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .slip-header p {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+    }
+
+    .slip-body {
+      padding: 32px 28px;
+    }
+
+    /* Roll Number Banner */
+    .roll-number-banner {
+      background: linear-gradient(135deg, #fff7ed, #ffedd5);
+      border: 2px dashed var(--accent);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 26px;
+    }
+
+    .roll-number-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #9a3412;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .roll-number-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 1px;
+      margin: 4px 0;
+    }
+
+    .roll-number-hint {
+      font-size: 0.85rem;
+      color: #7c2d12;
+    }
+
+    /* Info Table */
+    .details-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 26px;
+    }
+
+    .details-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.92rem;
+    }
+
+    .details-table td.label-col {
+      color: var(--text-muted);
+      font-weight: 600;
+      width: 40%;
+    }
+
+    .details-table td.val-col {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Notice Card */
+    .notice-card {
+      background: #f8fafc;
+      border-left: 4px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .notice-card strong {
+      color: var(--text-main);
+    }
+
+    /* Action Buttons */
+    .action-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      flex: 1;
+      min-width: 180px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-quiz {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(241, 96, 50, 0.35);
+    }
+
+    .btn-quiz:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-print {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1.5px solid #cbd5e1;
+    }
+
+    .btn-print:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    /* Print Stylesheet */
+    @media print {
+      body { background: #fff !important; }
+      .header-bar, .action-row, .notice-card { display: none !important; }
+      .main-wrap { padding: 0 !important; }
+      .slip-container {
+        box-shadow: none !important;
+        border: 2px solid #000 !important;
+        max-width: 100% !important;
+      }
+      .slip-header {
+        background: #fff !important;
+        color: #000 !important;
+        border-bottom: 2px solid #000 !important;
+      }
+      .slip-header h1, .slip-header p { color: #000 !important; }
+      .check-icon-circle { display: none !important; }
+      .roll-number-banner {
+        background: #fff !important;
+        border: 2px solid #000 !important;
+      }
+      .roll-number-val { color: #000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="header-bar">
+    <a href="/">
+      <img src="/public/assets/media/logo.png" alt="Brainova Logo">
+    </a>
+    <nav class="header-links">
+      <a href="/"><i class="fa-solid fa-house me-1"></i> Home</a>
+      <a href="/olympiads.html"><i class="fa-solid fa-book me-1"></i> Olympiads</a>
+      <a href="/contact-us.html"><i class="fa-solid fa-envelope me-1"></i> Support</a>
+    </nav>
+  </header>
+
+  <!-- Main Content Wrap -->
+  <main class="main-wrap">
+    <div class="slip-container">
+      
+      <!-- Slip Header -->
+      <div class="slip-header">
+        <div class="check-icon-circle">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h1 id="slipHeading">Registration Confirmed!</h1>
+        <p id="slipSubheading">Brainova National Olympiad 2026 Official Enrollment</p>
+      </div>
+
+      <!-- Slip Body -->
+      <div class="slip-body">
+        
+        <!-- Primary Assigned Identifier -->
+        <div class="roll-number-banner">
+          <div class="roll-number-label" id="identLabel">Official Candidate Roll Number</div>
+          <div class="roll-number-val" id="identVal">BNO-2026-PENDING</div>
+          <div class="roll-number-hint" id="identHint">Save this roll number to access your examination and scorecard</div>
+        </div>
+
+        <!-- Candidate Details Table -->
+        <table class="details-table" id="detailsTable">
+          <tbody>
+            <tr>
+              <td class="label-col">Candidate Name:</td>
+              <td class="val-col" id="dispName">Registered Candidate</td>
+            </tr>
+            <tr id="rowClass">
+              <td class="label-col">Class / Grade:</td>
+              <td class="val-col" id="dispClass">Class 10</td>
+            </tr>
+            <tr id="rowSchool">
+              <td class="label-col">Institution / School:</td>
+              <td class="val-col" id="dispSchool">Assigned School</td>
+            </tr>
+            <tr>
+              <td class="label-col">Confirmation Alert:</td>
+              <td class="val-col" style="color: var(--success);"><i class="fa-solid fa-circle-check me-1"></i> Dispatched to registered email</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Notice & Exam Advice -->
+        <div class="notice-card">
+          <p><strong><i class="fa-solid fa-circle-info text-warning me-1"></i> No Password Needed:</strong> You can take practice quizzes and your final Olympiad exam directly by entering your <strong>Roll Number</strong>. All scores are evaluated and saved automatically to your profile.</p>
+        </div>
+
+        <!-- Action Row -->
+        <div class="action-row">
+          <a href="/exam.html" id="btnLaunchQuiz" class="btn-action btn-quiz">
+            <i class="fa-solid fa-play"></i> Start Practice Quiz Now
+          </a>
+          <button type="button" onclick="window.print()" class="btn-action btn-print">
+            <i class="fa-solid fa-print"></i> Print Admit Slip
+          </button>
+          <a href="/" class="btn-action btn-secondary" style="flex: 0 0 auto;">
+            <i class="fa-solid fa-house"></i> Home
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var params = new URLSearchParams(window.location.search);
+      var type = params.get('type') || 'student';
+      var roll = params.get('roll');
+      var code = params.get('code');
+      var name = params.get('name');
+      var grade = params.get('class');
+      var school = params.get('school');
+
+      if (type === 'student') {
+        var studentRoll = roll || localStorage.getItem('brainova_roll') || 'BNO-2026-PENDING';
+        document.getElementById('identVal').textContent = studentRoll;
+        document.getElementById('identLabel').textContent = 'Official Candidate Roll Number';
+        document.getElementById('identHint').textContent = 'Use this Roll Number to start your exam anytime';
+        
+        if (name) document.getElementById('dispName').textContent = name;
+        if (grade) document.getElementById('dispClass').textContent = grade;
+        if (school) document.getElementById('dispSchool').textContent = school;
+
+        // Configure quiz button with roll number
+        var quizUrl = '/exam.html?roll=' + encodeURIComponent(studentRoll);
+        document.getElementById('btnLaunchQuiz').setAttribute('href', quizUrl);
+        localStorage.setItem('brainova_roll', studentRoll);
+
+      } else if (type === 'school') {
+        var schoolCode = code || 'SCH-101';
+        document.getElementById('slipHeading').textContent = 'School Registration Confirmed!';
+        document.getElementById('slipSubheading').textContent = 'Welcome to Brainova National Partner Network';
+        document.getElementById('identLabel').textContent = 'Assigned School Code';
+        document.getElementById('identVal').textContent = schoolCode;
+        document.getElementById('identHint').textContent = 'Share this School Code with your participating students';
+
+        document.getElementById('rowClass').style.display = 'none';
+        document.getElementById('dispSchool').textContent = name || 'Registered Institution';
+        document.getElementById('dispName').textContent = 'Institutional Coordinator';
+
+        document.getElementById('btnLaunchQuiz').innerHTML = '<i class="fa-solid fa-book-open"></i> View Subject Syllabus';
+        document.getElementById('btnLaunchQuiz').setAttribute('href', '/olympiads.html');
+      }
+    });
+  </script>
+
+</body>
+</html>

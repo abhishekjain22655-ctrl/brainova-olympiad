@@ -79,6 +79,37 @@ router.get('/questions/:subjectSlug', async (req, res) => {
   }
 });
 
+// 2B. Candidate lookup by Roll Number (No password required)
+router.get('/candidate/:rollNumber', async (req, res) => {
+  try {
+    const { rollNumber } = req.params;
+    const student = await get(`
+      SELECT s.id, s.roll_number, s.full_name, s.grade_class, s.city, sc.school_name 
+      FROM students s
+      LEFT JOIN schools sc ON s.school_id = sc.id
+      WHERE LOWER(s.roll_number) = ? OR LOWER(s.email) = ?
+    `, [rollNumber.toLowerCase().trim(), rollNumber.toLowerCase().trim()]);
+
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'Candidate not found' });
+    }
+
+    res.json({
+      success: true,
+      candidate: {
+        id: student.id,
+        roll_number: student.roll_number,
+        name: student.full_name,
+        grade_class: student.grade_class,
+        school_name: student.school_name || 'Independent Candidate'
+      }
+    });
+  } catch (error) {
+    console.error('Candidate lookup error:', error);
+    res.status(500).json({ success: false, message: 'Lookup error' });
+  }
+});
+
 // 3. Submit exam attempt and calculate scorecard
 router.post('/submit', async (req, res) => {
   try {
