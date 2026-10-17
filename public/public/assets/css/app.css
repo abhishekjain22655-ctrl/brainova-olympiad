@@ -3857,9 +3857,9 @@ footer .footer-wrapper .link-block form .mailBox {
 }
 
 .title-banner {
-  background: url("../media/hero/hero-bg-2.png") no-repeat;
+  background: #19124d url("../media/hero/hero-bg-2.png") no-repeat;
   background-position: center;
-  background-size: 100% 100%;
+  background-size: cover;
 }
 .title-banner .title-wrapper {
   padding-top: clamp(64px, 5vw, 150px);
