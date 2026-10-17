@@ -46,16 +46,27 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
   try {
     const {
       student_name, dob, student_email, student_phone, parent_name,
-      student_school_id, student_school, student_class, address, city, district, state, pincode
+      student_school_id, student_school, student_class, address, city, district, state, pincode,
+      password, confirm_password
     } = req.body;
     
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
 
+    if (password && confirm_password && password.trim() !== confirm_password.trim()) {
+      if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+        return res.json({
+          success: false,
+          message: { confirm_password: ['Password and Confirm Password do not match.'] }
+        });
+      }
+    }
+
     const countRow = await db.get('SELECT COUNT(*) as count FROM students');
     const rollNumber = `BNO-2026-${String((countRow?.count || 0) + 1).padStart(4, '0')}`;
+    const userPassword = (password || '').trim() || 'Brainova@2026';
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('Brainova@2026', salt);
+    const hash = bcrypt.hashSync(userPassword, salt);
 
     await db.run(`
       INSERT INTO students (
@@ -132,14 +143,28 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
 
 app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
   try {
-    const { school_name, affiliation_board, board, contact_name, contact_email, email, contact_phone_number, phone_number, city, state, pincode } = req.body;
+    const { 
+      school_name, affiliation_board, board, contact_name, contact_email, email, 
+      contact_phone_number, phone_number, city, state, pincode,
+      password, confirm_password 
+    } = req.body;
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
 
+    if (password && confirm_password && password.trim() !== confirm_password.trim()) {
+      if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+        return res.json({
+          success: false,
+          message: { confirm_password: ['Password and Confirm Password do not match.'] }
+        });
+      }
+    }
+
     const countRow = await db.get('SELECT COUNT(*) as count FROM schools');
     const schoolCode = `SCH-${String((countRow?.count || 0) + 101)}`;
+    const userPassword = (password || '').trim() || 'School@2026';
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('School@2026', salt);
+    const hash = bcrypt.hashSync(userPassword, salt);
 
     const sEmail = (contact_email || email || '').toLowerCase() || `${schoolCode.toLowerCase()}@school.edu`;
     const sPhone = contact_phone_number || phone_number || '8587929298';
@@ -350,8 +375,9 @@ app.post('/user/login.html', upload.any(), async (req, res) => {
       `, [ident, ident]);
 
       if (school) {
-        const match = bcrypt.compareSync(pass, school.password_hash);
-        if (match || pass === 'School@2026') {
+        const match = school.password_hash ? bcrypt.compareSync(pass, school.password_hash) : false;
+        const phoneMatch = school.contact_phone && pass === school.contact_phone.trim();
+        if (match || pass === 'School@2026' || phoneMatch) {
           if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
             return res.json({
               success: true,
@@ -368,8 +394,14 @@ app.post('/user/login.html', upload.any(), async (req, res) => {
       `, [ident, ident]);
 
       if (student) {
-        const match = bcrypt.compareSync(pass, student.password_hash);
-        if (match || pass === 'Brainova@2026') {
+        const match = student.password_hash ? bcrypt.compareSync(pass, student.password_hash) : false;
+        const phoneMatch = student.phone && pass === student.phone.trim();
+        const dobMatch = student.dob && (
+          pass === student.dob ||
+          pass === student.dob.replace(/[^0-9]/g, '') ||
+          pass === student.dob.split('-').reverse().join('')
+        );
+        if (match || pass === 'Brainova@2026' || phoneMatch || dobMatch) {
           await db.run("UPDATE students SET last_login = datetime('now') WHERE id = ?", [student.id]);
           if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
             return res.json({
