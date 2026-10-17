@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const examRoutes = require('./routes/examRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
+const emailService = require('./services/emailService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,6 +68,25 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
       parseInt(student_school_id) || 1, student_class || 'Class 10',
       parent_name || '', address || '', city || '', state || '', pincode || ''
     ]);
+
+    // Dispatch background email notifications to both Admin and Student
+    try {
+      const schoolRow = await db.get('SELECT school_name, school_code FROM schools WHERE id = ?', [parseInt(student_school_id) || 1]);
+      emailService.sendStudentRegistrationEmails({
+        student: {
+          roll_number: rollNumber,
+          full_name: student_name || 'Registered Student',
+          email: student_email,
+          phone: student_phone,
+          grade_class: student_class || 'Class 10',
+          city: city,
+          state: state
+        },
+        school: schoolRow
+      });
+    } catch (e) {
+      console.error('Email dispatch trigger error:', e);
+    }
 
     // If client requested JSON (e.g. jQuery AJAX in front.js)
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
@@ -135,6 +155,24 @@ app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
       contact_name || 'Principal', sEmail,
       sPhone, hash, city || '', '', state || '', pincode || ''
     ]);
+
+    // Dispatch background email notifications to both Admin and School
+    try {
+      emailService.sendSchoolRegistrationEmails({
+        school: {
+          school_code: schoolCode,
+          school_name: school_name || 'Partner School',
+          affiliation_board: sBoard,
+          contact_person: contact_name || 'Principal',
+          contact_email: sEmail,
+          contact_phone: sPhone,
+          city: city,
+          state: state
+        }
+      });
+    } catch (e) {
+      console.error('School email dispatch trigger error:', e);
+    }
 
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
@@ -209,6 +247,20 @@ app.post('/contact-submit.html', upload.any(), async (req, res) => {
     await db.run('INSERT INTO contact_inquiries (full_name, phone_number, email, message) VALUES (?, ?, ?, ?)', [
       senderName, senderPhone, senderEmail, senderMsg
     ]);
+
+    // Dispatch background email notification to Admin
+    try {
+      emailService.sendContactInquiryEmails({
+        inquiry: {
+          full_name: senderName,
+          phone_number: senderPhone,
+          email: senderEmail,
+          message: senderMsg
+        }
+      });
+    } catch (e) {
+      console.error('Inquiry email dispatch error:', e);
+    }
 
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
