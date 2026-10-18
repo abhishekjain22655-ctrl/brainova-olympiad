@@ -54,8 +54,18 @@ async function loadDashboardOverview() {
     if (elStud) elStud.textContent = (metrics.total_students || 0).toLocaleString();
     if (elSch) elSch.textContent = (metrics.total_schools || 0).toLocaleString();
     if (elExams) elExams.textContent = (metrics.total_exams || 0).toLocaleString();
-    if (elPass) elPass.textContent = `${metrics.pass_rate || 85}%`;
+    if (elPass) elPass.textContent = `${metrics.pass_rate !== undefined ? metrics.pass_rate : 0}%`;
     if (elInq) elInq.textContent = (metrics.total_inquiries || 0).toLocaleString();
+
+    // Update active admin display
+    if (json.data.adminUser) {
+      const emailEl = document.getElementById('sidebarAdminEmail');
+      const avatarEl = document.querySelector('.admin-avatar');
+      if (emailEl) emailEl.textContent = json.data.adminUser.email;
+      if (avatarEl && json.data.adminUser.email) {
+        avatarEl.textContent = json.data.adminUser.email.charAt(0).toUpperCase();
+      }
+    }
 
     // 2. Render Charts
     renderGrowthTimelineChart(monthlyProgression);
@@ -148,26 +158,24 @@ function renderSubjectDonutChart(subjects) {
 
   destroyChart('chartSubjectDonut');
 
-  const defaultCounts = { 'math-olympiad': 48, 'english-olympiad': 32, 'gk-olympiad': 24, 'science-olympiad': 38 };
   const labels = subjects.map(s => s.title.replace(' Olympiad', ''));
-  const data = subjects.map(s => s.attempts > 0 ? s.attempts * 6 : (defaultCounts[s.slug] || 15));
+  const hasData = subjects.some(s => (s.attempts || 0) > 0);
+  const data = hasData ? subjects.map(s => s.attempts || 0) : [1];
+  const bgColors = hasData 
+    ? ['#f16032', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b']
+    : ['rgba(255, 255, 255, 0.08)'];
+  const chartLabels = hasData ? labels : ['No Submissions Yet'];
 
   chartInstances['chartSubjectDonut'] = new Chart(canvas, {
     type: 'doughnut',
     data: {
-      labels: labels,
+      labels: chartLabels,
       datasets: [{
         data: data,
-        backgroundColor: [
-          '#f16032', // Maths
-          '#3b82f6', // English
-          '#10b981', // GK
-          '#8b5cf6', // Science
-          '#f59e0b'  // Cyber
-        ],
+        backgroundColor: bgColors,
         borderColor: '#15103d',
         borderWidth: 4,
-        hoverOffset: 8
+        hoverOffset: hasData ? 8 : 0
       }]
     },
     options: {
@@ -193,9 +201,7 @@ function renderGradeDistributionChart(grades) {
   const gradeMap = {};
   grades.forEach(g => { gradeMap[g.grade_class] = g.count; });
 
-  const counts = allClasses.map((cls, idx) => {
-    return (gradeMap[cls] || 0) + (idx >= 4 ? (10 - idx) * 3 : (idx + 1) * 2);
-  });
+  const counts = allClasses.map(cls => gradeMap[cls] || 0);
 
   chartInstances['chartGradeDistribution'] = new Chart(canvas, {
     type: 'bar',
@@ -230,9 +236,8 @@ function renderScoreBenchmarkChart(subjects) {
 
   destroyChart('chartScoreBenchmark');
 
-  const defaultScores = { 'math-olympiad': 84.5, 'english-olympiad': 90.0, 'gk-olympiad': 76.5, 'science-olympiad': 82.0, 'cyber-olympiad': 88.0 };
   const labels = subjects.map(s => s.title.replace(' Olympiad', ''));
-  const scores = subjects.map(s => s.avg_score || defaultScores[s.slug] || 80);
+  const scores = subjects.map(s => s.avg_score || 0);
 
   chartInstances['chartScoreBenchmark'] = new Chart(canvas, {
     type: 'bar',

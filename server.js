@@ -68,6 +68,8 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(userPassword, salt);
 
+    const schoolId = student_school_id ? parseInt(student_school_id) : null;
+
     await db.run(`
       INSERT INTO students (
         roll_number, full_name, email, password_hash, phone, dob,
@@ -76,13 +78,14 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
     `, [
       rollNumber, student_name || 'Registered Student', (student_email || '').toLowerCase() || `${rollNumber.toLowerCase()}@brainova.com`,
       hash, student_phone || '9999999999', dob || null,
-      parseInt(student_school_id) || 1, student_class || 'Class 10',
+      schoolId, student_class || 'Class 10',
       parent_name || '', address || '', city || '', state || '', pincode || ''
     ]);
 
     // Dispatch background email notifications to both Admin and Student
     try {
-      const schoolRow = await db.get('SELECT school_name, school_code FROM schools WHERE id = ?', [parseInt(student_school_id) || 1]);
+      const schoolId = student_school_id ? parseInt(student_school_id) : null;
+      const schoolRow = schoolId ? await db.get('SELECT school_name, school_code FROM schools WHERE id = ?', [schoolId]) : null;
       emailService.sendStudentRegistrationEmails({
         student: {
           roll_number: rollNumber,

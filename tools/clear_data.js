@@ -7,18 +7,23 @@ const db = new sqlite3.Database(dbPath);
 db.serialize(() => {
   db.run('DELETE FROM exam_attempts');
   db.run('DELETE FROM students');
+  db.run('DELETE FROM schools');
   db.run('DELETE FROM contact_inquiries');
   db.run('DELETE FROM newsletter_subscribers');
-  db.run("DELETE FROM sqlite_sequence WHERE name IN ('students', 'exam_attempts', 'contact_inquiries', 'newsletter_subscribers')", (err) => {
+  db.run("DELETE FROM sqlite_sequence WHERE name IN ('students', 'schools', 'exam_attempts', 'contact_inquiries', 'newsletter_subscribers')", (err) => {
     if (err) {
       console.error('Error clearing sqlite sequences:', err);
     } else {
-      console.log('✅ ALL DUMMY DATA CLEARED!');
+      console.log('✅ ALL DUMMY DATA AND SCHOOLS CLEARED TO 0!');
     }
   });
 
   db.get('SELECT COUNT(*) as count FROM students', (err, row) => {
     console.log('Total Student Registrations now:', row ? row.count : 0);
+  });
+
+  db.get('SELECT COUNT(*) as count FROM schools', (err, row) => {
+    console.log('Total Partner Schools now:', row ? row.count : 0);
   });
 
   db.get('SELECT COUNT(*) as count FROM exam_attempts', (err, row) => {

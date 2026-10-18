@@ -292,35 +292,17 @@ async function initDatabase() {
     )
   `);
 
-  // Check if schools exist, otherwise seed
-  const schoolCount = await get(`SELECT COUNT(*) as count FROM schools`);
-  if (schoolCount.count === 0) {
+  // Check if subjects exist, otherwise seed subjects and questions
+  const subjectCount = await get(`SELECT COUNT(*) as count FROM subjects`);
+  if (!subjectCount || Number(subjectCount.count) === 0) {
     await seedInitialData();
   }
 }
 
 async function seedInitialData() {
-  console.log('Seeding initial Brainova Olympiad multi-tenant records...');
-  const salt = bcrypt.genSaltSync(10);
-  const defaultPassword = bcrypt.hashSync('Brainova@2026', salt);
+  console.log('Seeding core Olympiad subjects and question bank...');
 
-  // 1. Seed Schools (Tenants)
-  const schools = [
-    ['SCH-101', 'Delhi Public School, R.K. Puram', 'CBSE', 'Dr. Sandeep Sharma', 'principal@dpsrkp.net', '9811023456', defaultPassword, 'New Delhi', 'South West Delhi', 'Delhi', '110022'],
-    ['SCH-102', 'St. Xavier Collegiate High School', 'ICSE', 'Father James Lobo', 'admin@stxaviers.edu.in', '9833012984', defaultPassword, 'Mumbai', 'Mumbai City', 'Maharashtra', '400001'],
-    ['SCH-103', 'Kendriya Vidyalaya No. 1', 'CBSE', 'Meenakshi Sundaram', 'kv1.chennai@kvsedu.gov.in', '9444056781', defaultPassword, 'Chennai', 'Chennai', 'Tamil Nadu', '600036'],
-    ['SCH-104', 'The Heritage Valley School', 'Cambridge', 'Ananya Deshmukh', 'heritage.valley@edu.org', '9712045612', defaultPassword, 'Bengaluru', 'Bengaluru Urban', 'Karnataka', '560068'],
-    ['SCH-105', 'D.A.V. Centenary Public School', 'CBSE', 'Rajesh K. Verma', 'dav.rohini@davdelhi.in', '8587929298', defaultPassword, 'Delhi', 'North West Delhi', 'Delhi', '110085']
-  ];
-
-  for (const s of schools) {
-    await run(`
-      INSERT INTO schools (school_code, school_name, affiliation_board, contact_person, contact_email, contact_phone, password_hash, city, district, state, pincode)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, s);
-  }
-
-  // 2. Seed Subjects
+  // 1. Seed Core Subjects
   const subjects = [
     ['math-olympiad', 'Mathematics Olympiad', 'Logical reasoning, algebraic expressions, geometric principles, and problem solving.', 30, 15, 4, 0.0, 'fa-calculator'],
     ['english-olympiad', 'English Olympiad', 'Grammar mastery, comprehension, advanced vocabulary, syntax, and literary verbal ability.', 30, 15, 4, 0.0, 'fa-spell-check'],

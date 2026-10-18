@@ -44,13 +44,13 @@ router.get('/dashboard-stats', async (req, res) => {
 
     const passRate = examAttemptsCount.count > 0 
       ? Math.round((passedAttempts.count / examAttemptsCount.count) * 100) 
-      : 82;
+      : 0;
 
     const subjectStats = await all(`
       SELECT 
         sub.slug, sub.title,
         COUNT(ea.id) as attempts,
-        COALESCE(ROUND(AVG(ea.percentage), 1), 75.0) as avg_score
+        COALESCE(ROUND(AVG(ea.percentage), 1), 0.0) as avg_score
       FROM subjects sub
       LEFT JOIN exam_attempts ea ON sub.id = ea.subject_id
       GROUP BY sub.id
@@ -79,22 +79,29 @@ router.get('/dashboard-stats', async (req, res) => {
       LIMIT 5
     `);
 
+    // Real progression: zero when brand new
     const monthlyProgression = [
-      { month: 'Jun', students: 120, schools: 4, exams: 95 },
-      { month: 'Jul', students: 240, schools: 8, exams: 210 },
-      { month: 'Aug', students: 580, schools: 15, exams: 480 },
-      { month: 'Sep', students: 950, schools: 28, exams: 820 },
-      { month: 'Oct', students: 1420 + studentCount.count, schools: 42 + schoolCount.count, exams: 1250 + examAttemptsCount.count }
+      { month: 'Jun', students: 0, schools: 0, exams: 0 },
+      { month: 'Jul', students: 0, schools: 0, exams: 0 },
+      { month: 'Aug', students: 0, schools: 0, exams: 0 },
+      { month: 'Sep', students: 0, schools: 0, exams: 0 },
+      { month: 'Current', students: studentCount.count, schools: schoolCount.count, exams: examAttemptsCount.count }
     ];
+
+    const currentAdminUser = process.env.ADMIN_USER || 'admin@brainova.com';
 
     res.json({
       success: true,
       data: {
+        adminUser: {
+          name: 'Super Admin',
+          email: currentAdminUser
+        },
         metrics: {
           total_students: studentCount.count,
           total_schools: schoolCount.count,
           total_exams: examAttemptsCount.count,
-          average_score: avgScoreRow.avg_pct ? parseFloat(avgScoreRow.avg_pct).toFixed(1) : '84.5',
+          average_score: avgScoreRow.avg_pct ? parseFloat(avgScoreRow.avg_pct).toFixed(1) : '0.0',
           pass_rate: passRate,
           total_inquiries: inquiriesCount.count
         },
