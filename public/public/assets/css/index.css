@@ -101,3 +101,75 @@
             bottom: 30px;
         }
     }
+
+/* =====================================================================
+   OLYMPIAD SLIDER ROUND DOTS (ENSURE PERFECT CIRCLES ON ALL SCREENS)
+   ===================================================================== */
+.olympiad-resources-slider .slick-dots,
+.slick-dots {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 24px auto 8px auto !important;
+    width: 100% !important;
+}
+
+.olympiad-resources-slider .slick-dots li,
+.slick-dots li {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    max-width: 14px !important;
+    min-height: 14px !important;
+    max-height: 14px !important;
+    margin: 0 3px !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
+}
+
+.olympiad-resources-slider .slick-dots li button,
+.slick-dots li button {
+    display: block !important;
+    width: 12px !important;
+    height: 12px !important;
+    min-width: 12px !important;
+    max-width: 12px !important;
+    min-height: 12px !important;
+    max-height: 12px !important;
+    aspect-ratio: 1 / 1 !important;
+    flex-shrink: 0 !important;
+    border: 1.5px solid #0d6b61 !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    transition: all 0.25s ease !important;
+}
+
+.olympiad-resources-slider .slick-dots li button:before,
+.slick-dots li button:before {
+    display: none !important;
+    content: "" !important;
+}
+
+.olympiad-resources-slider .slick-dots li.slick-active button,
+.slick-dots li.slick-active button {
+    width: 14px !important;
+    height: 14px !important;
+    min-width: 14px !important;
+    min-height: 14px !important;
+    background: #1b1464 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 0 2px #1b1464 !important;
+}

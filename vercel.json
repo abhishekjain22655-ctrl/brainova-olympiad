@@ -6,6 +6,10 @@
       "destination": "/api/index.js"
     },
     {
+      "source": "/user/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
       "source": "/student-registration-submit.html",
       "destination": "/api/index.js"
     },
@@ -15,6 +19,14 @@
     },
     {
       "source": "/inquiry-submit.html",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/contact-submit.html",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/newsletters.html",
       "destination": "/api/index.js"
     },
     {

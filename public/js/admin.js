@@ -57,14 +57,24 @@ async function loadDashboardOverview() {
     if (elPass) elPass.textContent = `${metrics.pass_rate !== undefined ? metrics.pass_rate : 0}%`;
     if (elInq) elInq.textContent = (metrics.total_inquiries || 0).toLocaleString();
 
-    // Update active admin display
-    if (json.data.adminUser) {
-      const emailEl = document.getElementById('sidebarAdminEmail');
-      const avatarEl = document.querySelector('.admin-avatar');
-      if (emailEl) emailEl.textContent = json.data.adminUser.email;
-      if (avatarEl && json.data.adminUser.email) {
-        avatarEl.textContent = json.data.adminUser.email.charAt(0).toUpperCase();
+    // Update active user/admin display
+    try {
+      const stored = localStorage.getItem('brainova_user');
+      const storedUser = stored ? JSON.parse(stored) : null;
+      const user = json.data.adminUser || storedUser;
+      if (user) {
+        const nameEl = document.getElementById('sidebarAdminName');
+        const emailEl = document.getElementById('sidebarAdminEmail');
+        const avatarEl = document.getElementById('sidebarAdminAvatar');
+        if (nameEl) nameEl.textContent = user.name || (user.role === 'admin' ? 'Super Admin' : (user.role === 'school' ? 'Partner School' : 'Candidate Student'));
+        if (emailEl) emailEl.textContent = user.email || user.username || 'user@brainova.com';
+        if (avatarEl) {
+          const letter = (user.name || user.email || 'A').charAt(0).toUpperCase();
+          avatarEl.textContent = letter;
+        }
       }
+    } catch (e) {
+      console.warn('Profile sync warn:', e);
     }
 
     // 2. Render Charts
