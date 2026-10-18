@@ -1,32 +1,120 @@
 const path = require('path');
+const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 
-const dbPath = path.resolve(__dirname, '../brainova.db');
-const db = new sqlite3.Database(dbPath);
+const DB_CLIENT = (process.env.DB_CLIENT || 'sqlite').toLowerCase();
+
+let sqliteDb = null;
+let mysqlPool = null;
+let pgPool = null;
+
+// Initialize adapter based on DB_CLIENT
+if (DB_CLIENT === 'mysql') {
+  const mysql = require('mysql2/promise');
+  mysqlPool = mysql.createPool({
+    host: process.env.MYSQL_HOST || 'localhost',
+    port: parseInt(process.env.MYSQL_PORT, 10) || 3306,
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DATABASE || 'brainova_olympiad',
+    waitForConnections: true,
+    connectionLimit: 15,
+    queueLimit: 0,
+    multipleStatements: true
+  });
+  console.log(`[DB] Using MySQL / MariaDB adapter (${process.env.MYSQL_HOST}:${process.env.MYSQL_PORT || 3306}/${process.env.MYSQL_DATABASE})`);
+} else if (DB_CLIENT === 'postgres') {
+  const { Pool } = require('pg');
+  pgPool = new Pool({
+    host: process.env.PG_HOST || 'localhost',
+    port: parseInt(process.env.PG_PORT, 10) || 5432,
+    user: process.env.PG_USER || 'postgres',
+    password: process.env.PG_PASSWORD || '',
+    database: process.env.PG_DATABASE || 'brainova_olympiad',
+    ssl: process.env.PG_SSL === 'true' ? { rejectUnauthorized: false } : false
+  });
+  console.log(`[DB] Using PostgreSQL adapter (${process.env.PG_HOST}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE})`);
+} else {
+  const dbPath = path.resolve(__dirname, '../brainova.db');
+  sqliteDb = new sqlite3.Database(dbPath);
+  console.log(`[DB] Using SQLite Embedded adapter (${dbPath})`);
+}
+
+// Dialect SQL normalizer for cross-database compatibility
+function normalizeSql(sql, dialect) {
+  if (dialect === 'mysql') {
+    return sql
+      .replace(/INSERT\s+OR\s+IGNORE\s+INTO/gi, 'INSERT IGNORE INTO')
+      .replace(/datetime\('now',\s*'-(\d+)\s+days?'\)/gi, 'DATE_SUB(NOW(), INTERVAL $1 DAY)')
+      .replace(/datetime\('now',\s*'-(\d+)\s+hours?'\)/gi, 'DATE_SUB(NOW(), INTERVAL $1 HOUR)')
+      .replace(/datetime\('now'\)/gi, 'NOW()');
+  }
+  if (dialect === 'postgres') {
+    let s = sql
+      .replace(/INSERT\s+OR\s+IGNORE\s+INTO\s+([a-zA-Z0-9_]+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/gi, 'INSERT INTO $1 ($2) VALUES ($3) ON CONFLICT DO NOTHING')
+      .replace(/datetime\('now',\s*'-(\d+)\s+days?'\)/gi, "NOW() - INTERVAL '$1 days'")
+      .replace(/datetime\('now',\s*'-(\d+)\s+hours?'\)/gi, "NOW() - INTERVAL '$1 hours'")
+      .replace(/datetime\('now'\)/gi, 'CURRENT_TIMESTAMP');
+    let idx = 1;
+    s = s.replace(/\?/g, () => `$${idx++}`);
+    return s;
+  }
+  return sql;
+}
 
 // Promisified wrappers
-function run(sql, params = []) {
+async function run(sql, params = []) {
+  if (DB_CLIENT === 'mysql') {
+    const querySql = normalizeSql(sql, 'mysql');
+    const [result] = await mysqlPool.query(querySql, params);
+    return { lastID: result.insertId, changes: result.affectedRows };
+  }
+  if (DB_CLIENT === 'postgres') {
+    const querySql = normalizeSql(sql, 'postgres');
+    const result = await pgPool.query(querySql, params);
+    return { lastID: result.rows[0]?.id || null, changes: result.rowCount };
+  }
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
+    sqliteDb.run(sql, params, function (err) {
       if (err) return reject(err);
       resolve({ lastID: this.lastID, changes: this.changes });
     });
   });
 }
 
-function get(sql, params = []) {
+async function get(sql, params = []) {
+  if (DB_CLIENT === 'mysql') {
+    const querySql = normalizeSql(sql, 'mysql');
+    const [rows] = await mysqlPool.query(querySql, params);
+    return rows && rows.length > 0 ? rows[0] : undefined;
+  }
+  if (DB_CLIENT === 'postgres') {
+    const querySql = normalizeSql(sql, 'postgres');
+    const result = await pgPool.query(querySql, params);
+    return result.rows && result.rows.length > 0 ? result.rows[0] : undefined;
+  }
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
+    sqliteDb.get(sql, params, (err, row) => {
       if (err) return reject(err);
       resolve(row);
     });
   });
 }
 
-function all(sql, params = []) {
+async function all(sql, params = []) {
+  if (DB_CLIENT === 'mysql') {
+    const querySql = normalizeSql(sql, 'mysql');
+    const [rows] = await mysqlPool.query(querySql, params);
+    return rows || [];
+  }
+  if (DB_CLIENT === 'postgres') {
+    const querySql = normalizeSql(sql, 'postgres');
+    const result = await pgPool.query(querySql, params);
+    return result.rows || [];
+  }
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
+    sqliteDb.all(sql, params, (err, rows) => {
       if (err) return reject(err);
       resolve(rows);
     });
@@ -35,6 +123,48 @@ function all(sql, params = []) {
 
 // Database Initialization and Seeding
 async function initDatabase() {
+  if (DB_CLIENT === 'mysql') {
+    try {
+      console.log('[DB:MySQL] Testing connection to MySQL server...');
+      await mysqlPool.query('SELECT 1');
+      console.log('[DB:MySQL] Connected successfully.');
+
+      // Check if schema exists, if not execute schema.sql
+      const [tableRows] = await mysqlPool.query("SHOW TABLES LIKE 'schools'");
+      if (!tableRows || tableRows.length === 0) {
+        console.log('[DB:MySQL] Tables not detected. Applying db/schema.sql...');
+        const schemaPath = path.join(__dirname, 'schema.sql');
+        if (fs.existsSync(schemaPath)) {
+          const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+          await mysqlPool.query(schemaSql);
+          console.log('[DB:MySQL] Schema applied successfully.');
+        }
+      }
+
+      // Check if seeded
+      const schoolCount = await get('SELECT COUNT(*) as count FROM schools');
+      if (!schoolCount || Number(schoolCount.count) === 0) {
+        await seedInitialData();
+      }
+      return;
+    } catch (err) {
+      console.error('[DB:MySQL ERROR] Failed to initialize MySQL database:', err.message);
+      console.error('[DB:MySQL ERROR] Please verify your MYSQL_* settings in .env or run db/schema.sql in phpMyAdmin/MySQL.');
+      throw err;
+    }
+  }
+
+  if (DB_CLIENT === 'postgres') {
+    try {
+      console.log('[DB:Postgres] Testing connection to PostgreSQL...');
+      await pgPool.query('SELECT 1');
+      console.log('[DB:Postgres] Connected successfully.');
+      return;
+    } catch (err) {
+      console.error('[DB:Postgres ERROR] Failed to initialize PostgreSQL database:', err.message);
+      throw err;
+    }
+  }
   // Create Schools table
   await run(`
     CREATE TABLE IF NOT EXISTS schools (
@@ -296,6 +426,16 @@ async function seedInitialData() {
   console.log('Seeding completed successfully!');
 }
 
+const db = {
+  run,
+  get,
+  all,
+  initDatabase,
+  get client() {
+    return sqliteDb || mysqlPool || pgPool;
+  }
+};
+
 module.exports = {
   db,
   run,
@@ -303,3 +443,4 @@ module.exports = {
   all,
   initDatabase
 };
+
