@@ -36,10 +36,21 @@ if (DB_CLIENT === 'mysql') {
   });
   console.log(`[DB] Using PostgreSQL adapter (${process.env.PG_HOST}:${process.env.PG_PORT || 5432}/${process.env.PG_DATABASE})`);
 } else {
-  const dbPath = path.resolve(__dirname, '../brainova.db');
-  sqliteDb = new sqlite3.Database(dbPath);
-  console.log(`[DB] Using SQLite Embedded adapter (${dbPath})`);
+  try {
+    const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+    const dbPath = isVercel ? ':memory:' : path.resolve(__dirname, '../brainova.db');
+    sqliteDb = new sqlite3.Database(dbPath, (err) => {
+      if (err) {
+        console.warn('[DB] SQLite open notice:', err.message);
+        sqliteDb = new sqlite3.Database(':memory:');
+      }
+    });
+    console.log(`[DB] Using SQLite Embedded adapter (${dbPath})`);
+  } catch (err) {
+    console.warn('[DB] SQLite initialization bypassed:', err.message);
+  }
 }
+
 
 // Dialect SQL normalizer for cross-database compatibility
 function normalizeSql(sql, dialect) {
@@ -165,6 +176,8 @@ async function initDatabase() {
       throw err;
     }
   }
+
+  try {
   // Create Schools table
   await run(`
     CREATE TABLE IF NOT EXISTS schools (
@@ -296,6 +309,9 @@ async function initDatabase() {
   const subjectCount = await get(`SELECT COUNT(*) as count FROM subjects`);
   if (!subjectCount || Number(subjectCount.count) === 0) {
     await seedInitialData();
+  }
+  } catch (err) {
+    console.warn('[DB] SQLite table setup notice:', err.message);
   }
 }
 

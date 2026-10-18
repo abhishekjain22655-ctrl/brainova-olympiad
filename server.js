@@ -540,21 +540,36 @@ app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(__di
 
 // Catch-all fallback
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      res.status(200).send('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/"></head><body>Redirecting to Brainova Olympiad...</body></html>');
+    }
+  });
 });
 
 // Start Server
-initDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`=======================================================`);
-    console.log(` Brainova National Olympiad Platform is LIVE!`);
-    console.log(` Local Server:   http://localhost:${PORT}`);
-    console.log(` Admin Portal:   http://localhost:${PORT}/admin`);
-    console.log(` Subject Portal: http://localhost:${PORT}/olympiads.html`);
-    console.log(` Online Exam:    http://localhost:${PORT}/exam.html`);
-    console.log(` Registration:   http://localhost:${PORT}/register.html`);
-    console.log(`=======================================================`);
+if (require.main === module) {
+  initDatabase().then(() => {
+    app.listen(PORT, () => {
+      console.log(`=======================================================`);
+      console.log(` Brainova National Olympiad Platform is LIVE!`);
+      console.log(` Local Server:   http://localhost:${PORT}`);
+      console.log(` Admin Portal:   http://localhost:${PORT}/admin`);
+      console.log(` Subject Portal: http://localhost:${PORT}/olympiads.html`);
+      console.log(` Online Exam:    http://localhost:${PORT}/exam.html`);
+      console.log(` Registration:   http://localhost:${PORT}/register.html`);
+      console.log(`=======================================================`);
+    });
+  }).catch(err => {
+    console.error('Failed to initialize database:', err);
   });
-}).catch(err => {
-  console.error('Failed to initialize database:', err);
-});
+} else {
+  // When imported as a serverless function (Vercel)
+  initDatabase().catch(err => {
+    console.warn('Database initialization note:', err.message);
+  });
+}
+
+module.exports = app;
+
