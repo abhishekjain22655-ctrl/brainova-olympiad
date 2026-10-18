@@ -257,7 +257,21 @@ app.post('/contact-submit.html', upload.any(), async (req, res) => {
     if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
       return res.json({
         success: true,
-        message: 'Your inquiry has been received. Our team will contact you shortly.'
+        message: 'Your inquiry has been received. Our team will contact you shortly.',
+        html: `
+          <div style="padding: 35px 20px; text-align: center;">
+            <div style="width: 70px; height: 70px; margin: 0 auto 16px; background: rgba(16, 185, 129, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="fa-solid fa-check" style="font-size: 2.2rem; color: #10b981;"></i>
+            </div>
+            <h4 style="color: #0f172a; font-weight: 700; font-size: 1.4rem; margin-bottom: 8px;">Inquiry Received!</h4>
+            <p style="color: #64748b; font-size: 0.95rem; line-height: 1.5; margin-bottom: 22px;">
+              Thank you, <strong>${senderName}</strong>. Our academic team has received your inquiry and will contact you shortly on <strong>${senderPhone}</strong>.
+            </p>
+            <button type="button" class="btn" data-bs-dismiss="modal" onclick="jQuery('#quoteModal').modal('hide');" style="background: #f16032; color: #fff; padding: 10px 24px; border-radius: 8px; font-weight: 600;">
+              Close Window
+            </button>
+          </div>
+        `
       });
     }
 
@@ -458,45 +472,7 @@ app.get(['/teachers.html', '/teachers'], (req, res) => res.redirect('/about-us.h
 app.post('/blog/comment/store', (req, res) => {
   res.send('<script>alert("Thank you! Your comment has been submitted successfully."); history.back();</script>');
 });
-app.post('/contact-submit.html', upload.any(), async (req, res) => {
-  try {
-    const { name, full_name, email, phone, phone_number, message } = req.body;
-    const db = require('./db/database');
-    const senderName = name || full_name || 'Visitor';
-    const senderEmail = (email || '').toLowerCase() || 'visitor@example.com';
-    const senderPhone = phone || phone_number || '';
-    const msg = message || 'Inquiry submitted from website';
 
-    await db.run(`
-      INSERT INTO contact_inquiries (full_name, phone_number, email, message, status)
-      VALUES (?, ?, ?, ?, 'new')
-    `, [senderName, senderPhone, senderEmail, msg]);
-
-    if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
-      return res.json({
-        success: true,
-        message: 'Your inquiry has been submitted successfully! Our team will contact you shortly.'
-      });
-    }
-
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Inquiry Received</title><link rel="stylesheet" href="/public/assets/css/vendor/bootstrap.min.css"></head>
-      <body style="background:#19124d; color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh; font-family:sans-serif; text-align:center;">
-        <div style="background:#ffffff; color:#19124d; padding:40px; border-radius:16px; max-width:500px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-          <h2 style="color:#10b981; font-weight:bold; margin-bottom:15px;">Inquiry Received!</h2>
-          <p style="color:#64748b;">Thank you <strong>${senderName}</strong>. Our team will get back to you shortly.</p>
-          <a href="/" class="btn" style="background:#19124d; color:#fff; padding:10px 20px; border-radius:8px;">Back to Home</a>
-        </div>
-      </body>
-      </html>
-    `);
-  } catch (err) {
-    console.error('Contact submission error:', err);
-    res.status(500).json({ success: false, message: 'Failed to submit inquiry.' });
-  }
-});
 
 // Admin Protection Middleware
 function checkAdminAuth(req, res, next) {

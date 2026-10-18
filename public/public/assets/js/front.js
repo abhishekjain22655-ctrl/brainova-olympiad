@@ -40,9 +40,11 @@ $(document).ready(function () {
                 if(r.success == true){
                     if(r.reload){location.reload();}
                     if(r.link){window.location.href = r.link;}
-                    if(r.html){frm.html(r.html);}   
-
-
+                    if(r.html){frm.html(r.html);}
+                    if(!r.link && !r.reload && !r.html) {
+                        alert(r.message || 'Thank you! Your inquiry has been submitted successfully.');
+                        try { $('.modal').modal('hide'); } catch(e){}
+                    }
                 }else{
                     // $.each(r.message, function(k,v){ 
                     //     if(v.length > 0){
