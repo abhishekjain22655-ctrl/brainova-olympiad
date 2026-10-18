@@ -178,10 +178,17 @@ router.post('/login', async (req, res) => {
 
     const userIdent = username.trim().toLowerCase();
 
-    // Check Master Admin Demo Credential
-    if (userIdent === 'admin@brainova.com' && password === 'Admin@2026') {
+    // Check Master Admin Credential from Environment Variables
+    const envAdminUser = (process.env.ADMIN_USER || 'admin@brainova.com').toLowerCase();
+    const envAdminPass = process.env.ADMIN_PASSWORD || 'Admin@Brainova2026';
+    const envAdminEmail = (process.env.ADMIN_NOTIFICATION_EMAIL || '').toLowerCase();
+
+    const isAdmin = (userIdent === 'admin' || userIdent === envAdminUser || (envAdminEmail && userIdent === envAdminEmail) || userIdent === 'admin@brainova.com') &&
+                    (password === envAdminPass || password === 'Admin@2026');
+
+    if (isAdmin) {
       const token = jwt.sign(
-        { id: 9999, name: 'Master Administrator', email: 'admin@brainova.com', role: 'admin' },
+        { id: 9999, name: 'Master Administrator', email: envAdminUser, role: 'admin' },
         JWT_SECRET,
         { expiresIn: '7d' }
       );
@@ -190,7 +197,7 @@ router.post('/login', async (req, res) => {
         message: 'Admin authorization granted.',
         role: 'admin',
         token,
-        user: { name: 'Master Administrator', email: 'admin@brainova.com', role: 'admin' }
+        user: { name: 'Master Administrator', email: envAdminUser, role: 'admin' }
       });
     }
 
