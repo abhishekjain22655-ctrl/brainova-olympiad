@@ -55,8 +55,8 @@ var MyScroll = "";
     },
     preloader: function () {
       setTimeout(function () {
-        $("#preloader").hide("slow");
-      }, 1500);
+        $("#preloader").fadeOut(250);
+      }, 200);
     },
     header: function () {
       function dynamicCurrentMenuClass(selector) {

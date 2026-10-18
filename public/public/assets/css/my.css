@@ -1849,3 +1849,242 @@ footer form.form_submit .submit-arrow svg {
         line-height: 1.3 !important;
     }
 }
+
+/* =====================================================================
+   COMPREHENSIVE MOBILE-FIRST UI & ALIGNMENT OVERHAUL
+   ===================================================================== */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+    }
+
+    #scroll-container {
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+
+    /* 1. PRELOADER DISMISS - NO BLANK WHITE SCREEN ON MOBILE */
+    #preloader {
+        pointer-events: none !important;
+        animation: mobilePreloaderDismiss 0.3s ease-out 0.2s forwards !important;
+    }
+    @keyframes mobilePreloaderDismiss {
+        0% { opacity: 1; visibility: visible; }
+        100% { opacity: 0; visibility: hidden; display: none !important; }
+    }
+
+    /* 2. TOPBAR ON MOBILE - PERFECT FIT, NO HORIZONTAL SCROLL OR CUT OFF */
+    .topbar-one {
+        padding: 6px 0 !important;
+        background: #120c3b !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .topbar-one .container-fluid {
+        padding: 0 12px !important;
+    }
+    .topbar-one__inner {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 0 !important;
+    }
+    .topbar-one__info {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        gap: 15px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .topbar-one__info__item {
+        font-size: 11.5px !important;
+    }
+    .topbar-one__info__item a {
+        font-size: 11.5px !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-decoration: none !important;
+    }
+    .topbar-one__right {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    .topbar-one__social {
+        display: flex !important;
+        width: 100% !important;
+        gap: 8px !important;
+        justify-content: stretch !important;
+    }
+    .topbar-one__social .reg-class {
+        flex: 1 1 50% !important;
+        min-width: 0 !important;
+        padding: 6px 8px !important;
+        font-size: 11px !important;
+        text-align: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+        letter-spacing: 0 !important;
+        border-radius: 8px !important;
+    }
+    .topbar-one__social .school-reg-class {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    }
+
+    /* 3. HEADER & LOGO ALIGNMENT ON MOBILE */
+    .header {
+        padding: 10px 0 !important;
+        background: #ffffff !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+    }
+    .header .container-fluid {
+        padding: 0 14px !important;
+    }
+    .header .navigation {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+    }
+    .header-logo {
+        height: 38px !important;
+        max-height: 38px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+    .main-menu__right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-left: auto !important;
+    }
+    .main-menu__right .cus-btn.smheight {
+        padding: 6px 14px !important;
+        font-size: 12.5px !important;
+        font-weight: 700 !important;
+        height: auto !important;
+        min-height: 32px !important;
+        border-radius: 20px !important;
+        background: linear-gradient(135deg, #f16032, #ff7849) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 3px 10px rgba(241, 96, 50, 0.3) !important;
+    }
+    .main-menu__toggler {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px !important;
+        cursor: pointer !important;
+    }
+    .main-menu__toggler img {
+        width: 30px !important;
+        height: auto !important;
+    }
+
+    /* 4. HERO SECTION CARD & BANNER ALIGNMENT ON MOBILE */
+    .hero-banner {
+        position: relative !important;
+        overflow: hidden !important;
+        background: #0b0728 !important;
+    }
+    .hero-banner .carousel-item {
+        background-position: center center !important;
+        background-size: cover !important;
+        min-height: auto !important;
+    }
+    .hero-banner .carousel-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(11, 7, 40, 0.85) 0%, rgba(9, 6, 32, 0.95) 100%) !important;
+        z-index: 1;
+        pointer-events: none;
+    }
+    .min-vh-100-custom {
+        min-height: auto !important;
+        padding: 24px 12px 40px 12px !important;
+    }
+    .hero-banner .hero-content {
+        position: relative !important;
+        z-index: 2 !important;
+        background: rgba(18, 13, 56, 0.9) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 20px !important;
+        padding: 24px 16px !important;
+        margin: 10px auto 20px auto !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+    }
+    .hero-pill-badge {
+        font-size: 10px !important;
+        padding: 5px 12px !important;
+        letter-spacing: 0.5px !important;
+        margin: 0 auto 14px auto !important;
+        display: inline-flex !important;
+        justify-content: center !important;
+    }
+    .hero-main-title {
+        font-size: 24px !important;
+        line-height: 1.25 !important;
+        margin-bottom: 12px !important;
+        text-align: center !important;
+    }
+    .hero-sub-text {
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        color: #cbd5e1 !important;
+        margin: 0 auto 20px auto !important;
+        text-align: center !important;
+    }
+    .hero-buttons {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+    }
+    .hero-cta-btn {
+        width: 100% !important;
+        height: 48px !important;
+        font-size: 14.5px !important;
+        border-radius: 12px !important;
+        padding: 0 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    .hero-trust-box {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        margin-top: 5px !important;
+    }
+
+    /* 5. WHATSAPP BUTTON - MOVE TO BOTTOM-RIGHT, NO OVERLAPPING BUTTONS */
+    .whatsapp-float {
+        left: auto !important;
+        right: 18px !important;
+        bottom: 20px !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 26px !important;
+        z-index: 99999 !important;
+        box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45) !important;
+    }
+
+    /* Carousel nav controls on mobile */
+    .carousel-nav-controls {
+        display: none !important;
+    }
+}
