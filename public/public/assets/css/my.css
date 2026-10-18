@@ -1144,3 +1144,333 @@ line-height:40px;
 .editStudenticon{
     color: #18124c;
 }
+
+/* =====================================================================
+   BRAINOVA - MOBILE & TABLET RESPONSIVE EXCELLENCE SYSTEM
+   Optimized for: Phones (320px-480px), Phablets (481px-767px), Tablets (768px-991px)
+   ===================================================================== */
+
+/* 1. Global Viewport & Touch Stability */
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 2. Touch-Friendly Inputs & Anti-iOS Zoom */
+@media (max-width: 991px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents auto-zoom in Safari iOS */
+        min-height: 48px;
+        padding: 12px 14px !important;
+        border-radius: 10px !important;
+    }
+
+    textarea {
+        min-height: 90px;
+    }
+
+    button, .btn, .cus-btn, a.btn {
+        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+}
+
+/* 3. Mobile Header & Topbar Optimization */
+@media (max-width: 767px) {
+    .topbar-one {
+        padding: 8px 0;
+    }
+    .topbar-one__inner {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+    }
+    .topbar-one__info {
+        justify-content: center;
+        gap: 12px;
+        font-size: 13px;
+    }
+    .main-menu__wrapper {
+        padding: 10px 15px;
+    }
+    .main-menu__logo img {
+        max-height: 38px;
+        width: auto;
+    }
+}
+
+/* 4. Mobile Navigation Drawer Enhancements */
+.mobile-nav__wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-nav__wrapper.expanded {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.mobile-nav__content {
+    width: 85%;
+    max-width: 320px;
+    height: 100%;
+    background: #110d33;
+    padding: 24px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-nav__close {
+    font-size: 22px;
+    color: #ffffff;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 5. Quick Quote Modal Responsive Overhaul */
+@media (max-width: 991px) {
+    .sis-quote-modal .modal-dialog {
+        margin: 12px auto;
+        max-width: 94%;
+    }
+
+    .dk-modal-wrapper {
+        grid-template-columns: 1fr !important;
+        min-height: auto !important;
+        border-radius: 16px !important;
+        max-height: 90vh;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .dk-modal-left {
+        padding: 28px 20px !important;
+        text-align: center;
+        align-items: center;
+    }
+
+    .dk-modal-left h2 {
+        font-size: 24px !important;
+        line-height: 1.25 !important;
+        margin: 14px 0 10px !important;
+    }
+
+    .dk-modal-left p {
+        font-size: 14px !important;
+        line-height: 1.45 !important;
+        margin-bottom: 20px !important;
+    }
+
+    .dk-contact-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .dk-contact-card {
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        text-align: left;
+    }
+
+    .dk-modal-right {
+        padding: 26px 20px 30px !important;
+    }
+
+    .dk-modal-right h3 {
+        font-size: 22px !important;
+        margin: 6px 0 18px !important;
+    }
+
+    .sis-quote-close {
+        top: 10px !important;
+        right: 12px !important;
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+}
+
+/* 6. Registration Page Mobile Excellence */
+@media (max-width: 767px) {
+    .register-card, .form-container, .registration-box {
+        padding: 22px 16px !important;
+        border-radius: 16px !important;
+        margin: 10px auto !important;
+    }
+
+    .section-title-divider {
+        font-size: 1.1rem !important;
+        margin-top: 20px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .cus-btn, button[type="submit"] {
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 16px !important;
+        justify-content: center !important;
+    }
+
+    /* Recaptcha responsiveness on narrow screens */
+    .g-recaptcha {
+        max-width: 100%;
+        overflow: hidden;
+        transform-origin: 0 0;
+        -webkit-transform-origin: 0 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .g-recaptcha {
+        transform: scale(0.92);
+        -webkit-transform: scale(0.92);
+    }
+}
+
+/* 7. Login Page & Role Selector Tabs */
+@media (max-width: 767px) {
+    .login-container, .auth-card {
+        padding: 24px 16px !important;
+        margin: 16px auto !important;
+        border-radius: 16px !important;
+    }
+
+    .role-tabs, .nav-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding-bottom: 6px;
+    }
+
+    .role-tabs button, .nav-tabs .nav-link {
+        flex: 1 0 auto;
+        font-size: 14px;
+        padding: 10px 14px;
+        white-space: nowrap;
+    }
+
+    .demo-pill-btn {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 6px;
+    }
+}
+
+/* 8. Tables & Data Display Touch Scrolling */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+}
+
+.table-responsive table {
+    min-width: 600px;
+}
+
+/* 9. WhatsApp & Floating Action Elements */
+.whatsapp-float {
+    width: 52px !important;
+    height: 52px !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    font-size: 26px !important;
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45) !important;
+    z-index: 1050 !important;
+}
+
+#back-to-top {
+    bottom: 80px !important;
+    right: 22px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 16px !important;
+    z-index: 1040 !important;
+}
+
+/* 10. Hero Banner & Card Typography Responsiveness */
+@media (max-width: 767px) {
+    .banner-content h1, .hero-content h1, .banner-title, h1.title {
+        font-size: 24px !important;
+        line-height: 1.3 !important;
+    }
+    .banner-content p, .hero-content p {
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+    .hero-btn-group, .banner-btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+    .hero-btn-group a, .banner-btn-group a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    .counter-item {
+        padding: 16px 0 !important;
+    }
+    .counter-icon {
+        font-size: 36px !important;
+    }
+    .counter-content h2 {
+        font-size: 32px !important;
+    }
+    .award-section h2 {
+        font-size: 26px !important;
+        line-height: 1.3 !important;
+    }
+    .award-text {
+        font-size: 14px !important;
+        line-height: 22px !important;
+    }
+    .section-title h2, .sec-title h2 {
+        font-size: 24px !important;
+        line-height: 1.3 !important;
+    }
+}

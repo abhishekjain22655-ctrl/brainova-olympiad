@@ -820,6 +820,33 @@ function setupEventListeners() {
   document.getElementById('filterSchoolBoard')?.addEventListener('change', loadSchoolsDirectory);
   document.getElementById('filterSchoolStatus')?.addEventListener('change', loadSchoolsDirectory);
 
+  // Mobile Sidebar Toggle
+  const toggleBtn = document.getElementById('btnAdminSidebarToggle');
+  const sidebar = document.getElementById('adminSidebar');
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle('mobile-open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 992 && sidebar.classList.contains('mobile-open')) {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove('mobile-open');
+        }
+      }
+    });
+
+    // Close on nav link click in mobile
+    sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 992) {
+          sidebar.classList.remove('mobile-open');
+        }
+      });
+    });
+  }
+
   // Logout
   document.getElementById('btnAdminLogout')?.addEventListener('click', async () => {
     if (confirm('Are you sure you want to sign out of the Master Control Admin Panel?')) {
