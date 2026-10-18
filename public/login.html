@@ -33,142 +33,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <style>
-    .auth-section {
-        background: radial-gradient(circle at 10% 20%, rgba(241, 96, 50, 0.08), transparent 35%),
-                    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08), transparent 40%),
-                    #09061e;
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-    }
-    .auth-card {
-        background: rgba(21, 16, 61, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        padding: 42px 36px;
-        border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(16px);
-        color: #ffffff;
-    }
-    .auth-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 6px 16px;
-        border-radius: 20px;
-        background: rgba(241, 96, 50, 0.16);
-        border: 1px solid rgba(241, 96, 50, 0.35);
-        color: #ff9d7d;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        margin-bottom: 16px;
-    }
-    .login-type-pills {
-        display: flex;
-        background: rgba(255, 255, 255, 0.06);
-        padding: 5px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        gap: 6px;
-    }
-    .type-pill-btn {
-        flex: 1;
-        border: none;
-        background: transparent;
-        color: #94a3b8;
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-size: 13.5px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    .type-pill-btn.active {
-        background: linear-gradient(135deg, #f16032, #ff7849);
-        color: #ffffff;
-        box-shadow: 0 4px 14px rgba(241, 96, 50, 0.4);
-    }
-    .form-control-luxury {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
-        padding: 13px 16px !important;
-        font-size: 14.5px !important;
-        transition: all 0.25s ease !important;
-    }
-    .form-control-luxury:focus {
-        border-color: #f16032 !important;
-        box-shadow: 0 0 0 3px rgba(241, 96, 50, 0.25) !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-    }
-    .form-control-luxury::placeholder {
-        color: #64748b !important;
-    }
-    .password-wrapper {
-        position: relative;
-    }
-    .password-wrapper .toggle-password {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #94a3b8;
-        padding: 4px;
-    }
-    .quick-test-box {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px dashed rgba(255, 255, 255, 0.18);
-        border-radius: 14px;
-        padding: 14px 16px;
-        margin-bottom: 24px;
-    }
-    .quick-test-box .test-btn {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #e2e8f0;
-        font-size: 11.5px;
-        font-weight: 600;
-        padding: 5px 12px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-right: 6px;
-        margin-top: 4px;
-    }
-    .quick-test-box .test-btn:hover {
-        background: rgba(241, 96, 50, 0.2);
-        border-color: #f16032;
-        color: #ff9d7d;
-    }
-    .btn-submit-luxury {
-        background: linear-gradient(135deg, #f16032, #ff7849) !important;
-        border: none !important;
-        color: #ffffff !important;
-        font-size: 15px !important;
-        font-weight: 700 !important;
-        padding: 14px !important;
-        border-radius: 14px !important;
-        box-shadow: 0 8px 24px rgba(241, 96, 50, 0.45) !important;
-        transition: all 0.25s ease !important;
-        cursor: pointer !important;
-    }
-    .btn-submit-luxury:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 12px 30px rgba(241, 96, 50, 0.6) !important;
-    }
-    </style>
+
 
 </head>
 
@@ -360,85 +225,55 @@
         <section class="auth-section py-80">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-7 col-md-9 col-11">
+                    <div class="col-lg-8">
                         <div class="auth-card">
-                            <div class="text-center mb-4">
-                                <span class="auth-badge">
-                                    <i class="fa-solid fa-shield-halved me-1"></i> SECURE ACCESS PORTAL
-                                </span>
-                                <h2 class="fw-800 text-white mb-2">Welcome to Brainova</h2>
-                                <p class="text-muted small">Select your portal type or use quick credentials below.</p>
-                            </div>
-
-                            <!-- Login Type Switcher -->
-                            <div class="login-type-pills mb-4">
-                                <button type="button" class="type-pill-btn active" id="btnTypeStudent" onclick="setLoginType('student')">
-                                    <i class="fa-solid fa-user-graduate"></i> Student Login
-                                </button>
-                                <button type="button" class="type-pill-btn" id="btnTypeSchool" onclick="setLoginType('school')">
-                                    <i class="fa-solid fa-school"></i> School Login
-                                </button>
-                            </div>
-
-                            <!-- Quick 1-Click Fill Helper -->
-                            <div class="quick-test-box">
-                                <div class="text-muted small mb-2 d-flex align-items-center">
-                                    <i class="fa-solid fa-bolt text-warning me-2"></i>
-                                    <span><strong>Quick Test Login (1-Click Fill):</strong></span>
-                                </div>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button type="button" class="test-btn" onclick="fillQuickLogin('abbbhhhhuuu@gmail.com', '123456', 'student')">
-                                        <i class="fa-solid fa-user-check text-success"></i> My Account (abbbhhhhuuu)
-                                    </button>
-                                    <button type="button" class="test-btn" onclick="fillQuickLogin('admin@brainova.com', 'Admin@Brainova2026', 'student')">
-                                        <i class="fa-solid fa-crown text-warning"></i> Master Admin
-                                    </button>
-                                    <button type="button" class="test-btn" onclick="fillQuickLogin('school@brainova.com', '123456', 'school')">
-                                        <i class="fa-solid fa-building-columns text-info"></i> Partner School
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div id="loginFeedbackAlert" style="display: none;" class="alert mb-4"></div>
-
-                            <form id="universalLoginForm" action="/user/login.html" method="post" onsubmit="handleUniversalLogin(event)">
-                                <input type="hidden" name="login_type" id="hiddenLoginType" value="student">
-
-                                <div class="mb-3">
-                                    <label class="form-label text-white small fw-600 mb-1" id="loginLabelText">Username / Registered Email / Roll Number</label>
-                                    <div class="input-group">
-                                        <input type="text" name="username" id="loginUsername" class="form-control form-control-luxury"
-                                            placeholder="e.g. abbbhhhhuuu@gmail.com" required>
+                            <div id="loginFeedbackAlert" style="display: none;" class="alert mb-3"></div>
+                            <h3 class="fw-700 mb-2">Login</h3>
+                            <p class="text-muted mb-4">Select login type and continue.</p>
+                            <form action="/user/login.html" method="post" id="loginForm" onsubmit="handleUniversalLogin(event)">
+                                <div class="row">
+                                    <!-- Login Type -->
+                                    <div class="col-12 mb-4">
+                                        <div class="radio-selector-box d-flex">
+                                            <label class="me-4 mb-0">
+                                                <input type="radio" name="login_type" value="school">
+                                                School Login
+                                            </label>
+                                            <label class="mb-0">
+                                                <input type="radio" name="login_type" value="student" checked>
+                                                Student Login
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <label class="form-label text-white small fw-600 mb-0">Password</label>
-                                        <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#studentSchoolForgotModal" class="small text-muted" style="text-decoration: none;">
-                                            Forgot Password?
-                                        </a>
+                                    <!-- Username -->
+                                    <div class="col-12 mb-3">
+                                        <label class="form-label fw-600 mb-1">Username / Email</label>
+                                        <input type="text" name="username" id="login_username" class="form-control"
+                                            placeholder="Enter Username or Email" required>
                                     </div>
-                                    <div class="password-wrapper">
-                                        <input type="password" id="loginPassword" name="password"
-                                            class="form-control form-control-luxury pe-5" placeholder="Enter Password" required>
-                                        <span class="toggle-password" onclick="togglePasswordVisibility()">
-                                            <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
-                                        </span>
+                                    <!-- Password -->
+                                    <div class="col-12 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="form-label fw-600 mb-0">Password</label>
+                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#studentSchoolForgotModal" class="small text-muted" style="text-decoration: none;">
+                                                Forgot Password?
+                                            </a>
+                                        </div>
+                                        <div class="password-wrapper" style="position: relative;">
+                                            <input type="password" id="login_password" name="password"
+                                                class="form-control pe-5" placeholder="Enter Password" required>
+                                            <span class="toggle-password" onclick="togglePasswordVisibility()" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #64748b;">
+                                                <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="mt-4">
-                                    <button type="submit" class="btn btn-submit-luxury w-100" id="loginSubmitBtn">
-                                        <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Log In to Dashboard
-                                    </button>
-                                </div>
-
-                                <div class="text-center mt-4">
-                                    <span class="small text-muted">Don't have an account yet? </span>
-                                    <a href="/register.html" class="small fw-700" style="color: #f16032; text-decoration: none;">
-                                        Register Candidate / School <i class="fa-solid fa-arrow-right ms-1"></i>
-                                    </a>
+                                    <!-- Login Button -->
+                                    <div class="col-12 mt-3">
+                                        <button type="submit" class="cus-btn w-100" id="loginSubmitBtn">
+                                            <span class="btn-text">Login</span>
+                                            <span>Login</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -448,34 +283,8 @@
         </section>
 
         <script>
-        function setLoginType(type) {
-            document.getElementById('hiddenLoginType').value = type;
-            const btnStudent = document.getElementById('btnTypeStudent');
-            const btnSchool = document.getElementById('btnTypeSchool');
-            const labelText = document.getElementById('loginLabelText');
-            if (type === 'student') {
-                btnStudent.classList.add('active');
-                btnSchool.classList.remove('active');
-                labelText.textContent = 'Student Email / Roll Number';
-            } else {
-                btnSchool.classList.add('active');
-                btnStudent.classList.remove('active');
-                labelText.textContent = 'School Institutional Email / Code';
-            }
-        }
-
-        function fillQuickLogin(user, pass, type) {
-            document.getElementById('loginUsername').value = user;
-            document.getElementById('loginPassword').value = pass;
-            setLoginType(type);
-            const alertBox = document.getElementById('loginFeedbackAlert');
-            alertBox.className = 'alert alert-info py-2 small mb-3';
-            alertBox.style.display = 'block';
-            alertBox.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i> Credentials filled. Click "Log In to Dashboard" to proceed.';
-        }
-
         function togglePasswordVisibility() {
-            const pwd = document.getElementById('loginPassword');
+            const pwd = document.getElementById('login_password');
             const icon = document.getElementById('togglePasswordIcon');
             if (pwd.type === 'password') {
                 pwd.type = 'text';
@@ -492,10 +301,9 @@
             e.preventDefault();
             const btn = document.getElementById('loginSubmitBtn');
             const alertBox = document.getElementById('loginFeedbackAlert');
-            const form = document.getElementById('universalLoginForm');
+            const form = document.getElementById('loginForm');
 
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Authenticating...';
             alertBox.style.display = 'none';
 
             const formData = new FormData(form);
@@ -511,7 +319,7 @@
                 if (data.success) {
                     alertBox.className = 'alert alert-success py-2 small mb-3';
                     alertBox.style.display = 'block';
-                    alertBox.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i> ' + (data.message || 'Login successful! Opening Dashboard...');
+                    alertBox.innerHTML = '<i class="fa-solid fa-circle-check me-1"></i> ' + (data.message || 'Login successful!');
                     if (data.token) {
                         localStorage.setItem('brainova_token', data.token);
                     }
@@ -520,16 +328,14 @@
                     }
                     setTimeout(() => {
                         window.location.href = data.link || '/admin';
-                    }, 500);
+                    }, 400);
                 } else {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Log In to Dashboard';
                     alertBox.className = 'alert alert-danger py-2 small mb-3';
                     alertBox.style.display = 'block';
-                    alertBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-1"></i> ' + (data.message || 'Authentication failed. Please verify credentials.');
+                    alertBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation me-1"></i> ' + (data.message || 'Invalid username or password.');
                 }
             } catch (err) {
-                // If network or parser fallback, submit directly
                 form.submit();
             }
         }
