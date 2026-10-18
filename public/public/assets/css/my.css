@@ -1411,24 +1411,155 @@ img {
     min-width: 600px;
 }
 
-/* 9. WhatsApp & Floating Action Elements */
+/* 9. WhatsApp & Floating Action Elements + Footer Clearance */
 .whatsapp-float {
-    width: 52px !important;
-    height: 52px !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    font-size: 26px !important;
-    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45) !important;
+    width: 54px !important;
+    height: 54px !important;
+    bottom: 22px !important;
+    left: 20px !important;
+    right: auto !important;
+    font-size: 28px !important;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45) !important;
     z-index: 1050 !important;
 }
 
 #back-to-top {
-    bottom: 80px !important;
-    right: 22px !important;
-    width: 44px !important;
-    height: 44px !important;
+    bottom: 22px !important;
+    right: 20px !important;
+    width: 46px !important;
+    height: 46px !important;
     font-size: 16px !important;
     z-index: 1040 !important;
+    border-radius: 50% !important;
+}
+
+/* Footer Container & Newsletter Form Perfect Alignment */
+footer {
+    padding-bottom: 95px !important;
+    position: relative !important;
+}
+
+footer .bottom-bar {
+    position: relative !important;
+    z-index: 2 !important;
+    padding: 0 16px !important;
+    line-height: 1.8 !important;
+    margin: 0 auto !important;
+}
+
+/* Newsletter Subscription Form Precision Layout */
+footer .footer-wrapper .link-block form,
+footer form.form_submit {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    display: block !important;
+    margin-top: 8px !important;
+}
+
+footer .footer-wrapper .link-block form input.form-input,
+footer form.form_submit input.form-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 54px !important;
+    line-height: 54px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 50px !important;   /* Prevents text from colliding with mail icon */
+    padding-right: 56px !important;  /* Prevents text from colliding with submit button */
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    color: #ffffff !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    outline: none !important;
+    transition: all 0.25s ease !important;
+}
+
+footer .footer-wrapper .link-block form input.form-input:focus,
+footer form.form_submit input.form-input:focus {
+    border-color: #f16032 !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(241, 96, 50, 0.3) !important;
+}
+
+footer .footer-wrapper .link-block form input.form-input::placeholder,
+footer form.form_submit input.form-input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+    opacity: 1 !important;
+    font-size: 14px !important;
+}
+
+footer .footer-wrapper .link-block form .mailBox,
+footer form.form_submit .mailBox {
+    position: absolute !important;
+    left: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+    opacity: 0.85 !important;
+}
+
+footer .footer-wrapper .link-block form .submit-arrow,
+footer form.form_submit .submit-arrow {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 9px !important;
+    background: #f16032 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 5 !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 2px 8px rgba(241, 96, 50, 0.35) !important;
+}
+
+footer .footer-wrapper .link-block form .submit-arrow:hover,
+footer form.form_submit .submit-arrow:hover {
+    background: #e04f21 !important;
+    transform: translateY(-50%) scale(1.06) !important;
+    box-shadow: 0 4px 14px rgba(241, 96, 50, 0.5) !important;
+}
+
+footer .footer-wrapper .link-block form .submit-arrow svg,
+footer form.form_submit .submit-arrow svg {
+    width: 17px !important;
+    height: 17px !important;
+    display: block !important;
+    margin: auto !important;
+}
+
+@media (max-width: 768px) {
+    footer {
+        padding-bottom: 110px !important;
+    }
+    footer .footer-wrapper .link-block,
+    footer .footer-wrapper .link-block.contact-block,
+    footer .footer-wrapper .link-block.quick-links,
+    footer .footer-wrapper .link-block.popular,
+    footer .footer-wrapper .logo-block {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 24px !important;
+    }
+    footer .bottom-bar {
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+    }
 }
 
 /* 10. Hero Banner & Card Typography Responsiveness */

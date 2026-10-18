@@ -192,6 +192,15 @@ router.post('/login', async (req, res) => {
         JWT_SECRET,
         { expiresIn: '7d' }
       );
+
+      // Set persistent 7-day session cookie so admin stays logged in even after restarting browser
+      res.cookie('brainova_admin_token', token, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: 'lax',
+        path: '/'
+      });
+
       return res.json({
         success: true,
         message: 'Admin authorization granted.',
