@@ -1887,10 +1887,10 @@ footer form.form_submit .submit-arrow svg {
         100% { opacity: 0; visibility: hidden; display: none !important; }
     }
 
-    /* 2. TOPBAR ON MOBILE - SLEEK, BALANCED SINGLE-ROW DESIGN */
+    /* 2. TOPBAR ON MOBILE - PERFECT FIT, ZERO CUT-OFF */
     .topbar-one {
-        padding: 6px 0 !important;
-        background: #0f0b36 !important;
+        padding: 6px 0 8px 0 !important;
+        background: #0d082e !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
     .topbar-one .container-fluid {
@@ -1898,20 +1898,20 @@ footer form.form_submit .submit-arrow svg {
     }
     .topbar-one__inner {
         display: flex !important;
-        flex-direction: row !important;
-        justify-content: space-between !important;
+        flex-direction: column !important;
         align-items: center !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
+        gap: 6px !important;
         padding: 0 !important;
+        width: 100% !important;
     }
     .topbar-one__info {
         display: flex !important;
+        justify-content: center !important;
         align-items: center !important;
+        width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         list-style: none !important;
-        flex-shrink: 0 !important;
     }
     .topbar-one__info__item {
         display: flex !important;
@@ -1919,61 +1919,65 @@ footer form.form_submit .submit-arrow svg {
         margin: 0 !important;
     }
     .topbar-one__info__item a {
-        font-size: 11.5px !important;
+        font-size: 12px !important;
         font-weight: 700 !important;
         color: #ffffff !important;
         text-decoration: none !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 5px !important;
-        letter-spacing: 0.2px !important;
+        gap: 6px !important;
+        letter-spacing: 0.3px !important;
     }
     .topbar-one__info__item a i {
         color: #f16032 !important;
         font-size: 12px !important;
     }
     .topbar-one__right {
-        margin: 0 0 0 auto !important;
-        flex-shrink: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
     }
     .topbar-one__social {
-        display: inline-flex !important;
+        display: flex !important;
+        width: 100% !important;
+        gap: 8px !important;
+        justify-content: space-between !important;
         align-items: center !important;
-        gap: 6px !important;
-        width: auto !important;
     }
     .topbar-one__social .reg-class {
-        flex: 0 0 auto !important;
-        font-size: 10.5px !important;
+        flex: 1 1 50% !important;
+        width: 50% !important;
+        min-width: 0 !important;
+        padding: 6px 4px !important;
+        font-size: 11px !important;
         font-weight: 700 !important;
-        padding: 4px 10px !important;
-        border-radius: 20px !important;
-        white-space: nowrap !important;
-        text-decoration: none !important;
+        text-align: center !important;
         display: inline-flex !important;
         align-items: center !important;
-        gap: 4px !important;
-        letter-spacing: 0.2px !important;
-        box-shadow: none !important;
-        line-height: 1.2 !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        border-radius: 20px !important;
+        white-space: nowrap !important;
+        letter-spacing: 0 !important;
+        height: 34px !important;
+        box-sizing: border-box !important;
+        text-decoration: none !important;
     }
     .topbar-one__social .school-reg-class {
         background: rgba(255, 255, 255, 0.12) !important;
-        border: 1px solid rgba(255, 255, 255, 0.22) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
         color: #ffffff !important;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
     }
     .topbar-one__social .reg-class:not(.school-reg-class) {
         background: linear-gradient(135deg, #f16032, #ff7849) !important;
-        color: #ffffff !important;
         border: none !important;
+        color: #ffffff !important;
+        box-shadow: 0 3px 10px rgba(241, 96, 50, 0.35) !important;
     }
-    @media (max-width: 480px) {
+    @media (max-width: 360px) {
         .topbar-one__social .reg-class {
             font-size: 10px !important;
-            padding: 3.5px 7px !important;
-        }
-        .topbar-one__info__item a {
-            font-size: 11px !important;
+            padding: 5px 2px !important;
         }
     }
 
@@ -2213,13 +2217,43 @@ footer form.form_submit .submit-arrow svg {
         justify-content: center !important;
         border: 1px solid rgba(241, 96, 50, 0.3) !important;
     }
+    .mobile-nav__contact {
+        margin: 22px 0 16px 0 !important;
+        padding: 0 !important;
+    }
     .mobile-nav__contact li {
-        color: rgba(255, 255, 255, 0.8) !important;
+        display: flex !important;
+        align-items: center !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        margin-bottom: 12px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+    .mobile-nav__contact li i {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #f16032, #ff7849) !important;
+        color: #ffffff !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin-right: 10px !important;
         font-size: 13px !important;
-        margin-bottom: 10px !important;
+        box-shadow: 0 2px 8px rgba(241, 96, 50, 0.35) !important;
+        flex-shrink: 0 !important;
     }
     .mobile-nav__contact li a {
         color: #ffffff !important;
+        font-size: 11.5px !important;
+        font-weight: 500 !important;
+        word-break: break-all !important;
+        overflow-wrap: anywhere !important;
+        line-height: 1.35 !important;
+        text-decoration: none !important;
+        display: inline-block !important;
+        max-width: calc(100% - 42px) !important;
     }
     .mobile-nav__social a {
         background: rgba(255, 255, 255, 0.1) !important;
