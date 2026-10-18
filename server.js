@@ -9,11 +9,16 @@ const examRoutes = require('./routes/examRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const publicRoutes = require('./routes/publicRoutes');
 const emailService = require('./services/emailService');
+const { securityHeaders, loginLimiter, registerLimiter, inquiryLimiter, sanitizeInput, validatePassword } = require('./middleware/security');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Trust reverse proxies (Cloudflare, Render, cPanel NGINX) for accurate client IPs & HTTPS
+app.set('trust proxy', 1);
+
+// Security Headers (Helmet) & Core Middleware
+app.use(securityHeaders);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +47,7 @@ const multer = require('multer');
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } });
 
 // Form POST endpoints matching original site form actions
-app.post('/student-registration-submit.html', upload.any(), async (req, res) => {
+app.post('/student-registration-submit.html', registerLimiter, upload.any(), async (req, res) => {
   try {
     const {
       student_name, dob, student_email, student_phone, parent_name,
@@ -52,6 +57,16 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
     
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
+
+    // Security: Password length validation
+    if (password && password.trim().length < 6) {
+      if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+        return res.json({
+          success: false,
+          message: { password: ['Password must be at least 6 characters long for account security.'] }
+        });
+      }
+    }
 
     if (password && confirm_password && password.trim() !== confirm_password.trim()) {
       if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
@@ -70,16 +85,24 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
 
     const schoolId = student_school_id ? parseInt(student_school_id) : null;
 
+    // Sanitize user inputs against XSS
+    const cleanName = sanitizeInput(student_name) || 'Registered Student';
+    const cleanParent = sanitizeInput(parent_name) || '';
+    const cleanAddress = sanitizeInput(address) || '';
+    const cleanCity = sanitizeInput(city) || '';
+    const cleanState = sanitizeInput(state) || '';
+    const cleanPincode = sanitizeInput(pincode) || '';
+
     await db.run(`
       INSERT INTO students (
         roll_number, full_name, email, password_hash, phone, dob,
         school_id, grade_class, parent_name, address, city, state, pincode, status, last_login
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', datetime('now'))
     `, [
-      rollNumber, student_name || 'Registered Student', (student_email || '').toLowerCase() || `${rollNumber.toLowerCase()}@brainova.com`,
+      rollNumber, cleanName, (student_email || '').toLowerCase() || `${rollNumber.toLowerCase()}@brainova.com`,
       hash, student_phone || '9999999999', dob || null,
       schoolId, student_class || 'Class 10',
-      parent_name || '', address || '', city || '', state || '', pincode || ''
+      cleanParent, cleanAddress, cleanCity, cleanState, cleanPincode
     ]);
 
     // Dispatch background email notifications to both Admin and Student
@@ -124,7 +147,7 @@ app.post('/student-registration-submit.html', upload.any(), async (req, res) => 
   }
 });
 
-app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
+app.post('/school-registration-submit.html', registerLimiter, upload.any(), async (req, res) => {
   try {
     const { 
       school_name, affiliation_board, board, contact_name, contact_email, email, 
@@ -133,6 +156,16 @@ app.post('/school-registration-submit.html', upload.any(), async (req, res) => {
     } = req.body;
     const db = require('./db/database');
     const bcrypt = require('bcryptjs');
+
+    // Security: Password length validation
+    if (password && password.trim().length < 6) {
+      if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+        return res.json({
+          success: false,
+          message: { password: ['Password must be at least 6 characters long for account security.'] }
+        });
+      }
+    }
 
     if (password && confirm_password && password.trim() !== confirm_password.trim()) {
       if (req.xhr || req.headers.accept?.includes('json') || req.headers['x-requested-with'] === 'XMLHttpRequest') {
@@ -227,14 +260,14 @@ app.post('/school/search-school.html', async (req, res) => {
   }
 });
 
-app.post('/contact-submit.html', upload.any(), async (req, res) => {
+app.post('/contact-submit.html', inquiryLimiter, upload.any(), async (req, res) => {
   try {
     const { name, first_name, last_name, phone_number, phone, email, message } = req.body;
     const db = require('./db/database');
-    const senderName = name || (first_name ? `${first_name} ${last_name || ''}`.trim() : 'Anonymous Inquirer');
-    const senderPhone = phone_number || phone || '';
-    const senderEmail = email || '';
-    const senderMsg = message || '';
+    const senderName = sanitizeInput(name || (first_name ? `${first_name} ${last_name || ''}`.trim() : 'Anonymous Inquirer'));
+    const senderPhone = sanitizeInput(phone_number || phone || '');
+    const senderEmail = (email || '').trim().toLowerCase();
+    const senderMsg = sanitizeInput(message || '');
 
     await db.run('INSERT INTO contact_inquiries (full_name, phone_number, email, message) VALUES (?, ?, ?, ?)', [
       senderName, senderPhone, senderEmail, senderMsg
@@ -284,7 +317,7 @@ app.post('/contact-submit.html', upload.any(), async (req, res) => {
   }
 });
 
-app.post('/newsletters.html', async (req, res) => {
+app.post('/newsletters.html', inquiryLimiter, async (req, res) => {
   try {
     const { newsletter } = req.body;
     const db = require('./db/database');
@@ -297,7 +330,7 @@ app.post('/newsletters.html', async (req, res) => {
   }
 });
 
-app.post('/user/login.html', upload.any(), async (req, res) => {
+app.post('/user/login.html', loginLimiter, upload.any(), async (req, res) => {
   try {
     const { username, password, login_type } = req.body;
     const db = require('./db/database');

@@ -3,11 +3,12 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { get, run, all } = require('../db/database');
+const { loginLimiter, registerLimiter, sanitizeInput, validatePassword } = require('../middleware/security');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'brainova_olympiad_production_secret_2026';
 
 // Student Registration
-router.post('/register-student', async (req, res) => {
+router.post('/register-student', registerLimiter, async (req, res) => {
   try {
     const {
       student_name,
@@ -28,6 +29,10 @@ router.post('/register-student', async (req, res) => {
 
     if (!student_name || !student_email || !student_phone || !student_class) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields.' });
+    }
+
+    if (password && password.trim().length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long for account security.' });
     }
 
     // Check if email already exists
@@ -96,7 +101,7 @@ router.post('/register-student', async (req, res) => {
 });
 
 // School (Tenant) Registration
-router.post('/register-school', async (req, res) => {
+router.post('/register-school', registerLimiter, async (req, res) => {
   try {
     const {
       school_name,
@@ -113,6 +118,10 @@ router.post('/register-school', async (req, res) => {
 
     if (!school_name || !contact_email || !contact_phone || !contact_person) {
       return res.status(400).json({ success: false, message: 'Please provide all mandatory institutional details.' });
+    }
+
+    if (password && password.trim().length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long for institutional security.' });
     }
 
     const existing = await get('SELECT id FROM schools WHERE contact_email = ?', [contact_email.trim().toLowerCase()]);
@@ -133,16 +142,16 @@ router.post('/register-school', async (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
     `, [
       schoolCode,
-      school_name.trim(),
-      affiliation_board || 'CBSE',
-      contact_person.trim(),
+      sanitizeInput(school_name),
+      sanitizeInput(affiliation_board || 'CBSE'),
+      sanitizeInput(contact_person),
       contact_email.trim().toLowerCase(),
       contact_phone.trim(),
       passwordHash,
-      city || '',
-      district || '',
-      state || '',
-      pincode || ''
+      sanitizeInput(city || ''),
+      sanitizeInput(district || ''),
+      sanitizeInput(state || ''),
+      sanitizeInput(pincode || '')
     ]);
 
     const token = jwt.sign(
@@ -168,7 +177,7 @@ router.post('/register-school', async (req, res) => {
 });
 
 // Unified Login (Student, School, or Admin)
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { login_type, username, password } = req.body;
 
